@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}HUSTRunner-{{ user.username }}{% endblock %}
+
+{% block page_content %}
+<div class="main-content col-md-8" style="padding-left:0;padding-right:0;">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="top">
+                <a href="{{ url_for('user.profile', username=user.username) }}">{{ user.username }}</a>
+            </div>
+            <div class="profile-body">
+                <div class="avatar-editor col-md-2">
+                    <img src="#" class="img-rounded profile-thumbnail">
+                </div>
+                <div class="user-describe" style="margin-left:115px;">
+                    <div><span>{{ user.gender }}</span></div>
+                    <div><span>{% if user.school %}{{ user.school }}{% endif %}</span></div>
+                    <div><span>{{ user.signature }}</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+你好,{{ user.username }}:
+    感谢您注册HUSTRunner。
+    请点击以下链接进行邮箱验证:
+    {{ url_for('auth.confirm', token=token, _external=True) }}
+    您也可将地址复制到浏览器里直接打开。
+    如果您并未注册HUSTR，可能是其他用户误输入了您的邮箱地址。请忽略此邮件，或与我们联系。
