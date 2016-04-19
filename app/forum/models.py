@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, date
+from datetime import datetime
 from slugify import slugify
 
 from ..user.models import User
@@ -18,8 +18,8 @@ class Post(db.Model):
     date_created = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     date_modified = db.Column(db.DateTime)
     views = db.Column(db.Integer, default=0)
+    hot_index = db.Column(db.Integer, default=0)
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
-    comment_count = db.Column(db.Integer, default=0)
 
     @staticmethod
     def generate_fake(count=50):
@@ -35,11 +35,32 @@ class Post(db.Model):
             p = Post(content_html=forgery_py.lorem_ipsum.paragraph(html=True),
                      title=forgery_py.lorem_ipsum.title(),
                      date_created=forgery_py.date.date(past=True),
+                     views=randint(0,1000),
                      author=u,
                      topic=topic)
             p.slug = p.slugify()
             db.session.add(p)
-            db.session.commit()
+        db.session.commit()
+
+    @staticmethod
+    def rank_hot(topic_id=None):
+        """Rank posts by its hot index
+
+            hot_index = (views/10 + comment_count) / (date.now - date.created)
+            """
+        if not topic_id:
+            posts = Post.query.all()
+        else:
+            posts = Post.query.filter_by(topic_id=topic_id)
+        for post in posts:
+            hour_gap = (datetime.utcnow() - post.date_created).seconds // 3600
+            day_gap, remainder = divmod(hour_gap, 24)
+            if day_gap == 0 or remainder:
+                day_gap += 1
+            hot_index = (post.views / 10 + post.comments.count()) / day_gap
+            post.hot_index = hot_index
+            db.session.add(post)
+        db.session.commit()
 
     def slugify(self):
         """Return unique slug for post"""
@@ -86,3 +107,22 @@ class Comment(db.Model):
     date_created = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+    @staticmethod
+    def generate_fake(count=100):
+        from random import seed, randint
+        import forgery_py
+
+        seed()
+        user_count = User.query.count()
+        post_count = Post.query.count()
+        for i in range(count):
+            u = User.query.offset(randint(0, user_count - 1)).first()
+            p = Post.query.offset(randint(0, post_count - 1)).first()
+            c = Comment(content_html=forgery_py.lorem_ipsum.paragraph(html=True),
+                        date_created=forgery_py.date.date(past=True),
+                        author=u,
+                        post=p)
+            db.session.add(c)
+        db.session.commit()
+

@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 
 from .. import db
 from . import forum
-from .models import Post, Topic
+from .models import Post, Topic, Comment
 from .forms import PostForm
 
 
@@ -33,6 +33,7 @@ def new_post():
 @forum.route('/post/<slug>', methods=['GET', 'POST'])
 def view_post(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
+    comments = Comment.query.filter_by(post_id=post.id).all()
     post.views += 1
     db.session.add(post)
-    return render_template('article.html', post=post)
+    return render_template('article.html', post=post, comments=comments)

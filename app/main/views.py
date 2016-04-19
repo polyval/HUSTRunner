@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import os
 import re
 import json
@@ -14,24 +13,45 @@ from ..utils import rank_hot
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
+    page = request.args.get('page', 1, type=int)
     type = request.args.get('type')
     if not type:
-        posts = Post.query.order_by(Post.date_created.desc()).all()
+        pagination = Post.query.order_by(Post.date_created.desc()).paginate(
+            page=page, per_page=20, error_out=False
+        )
+        posts = pagination.items
     elif type == 'essence':
-        posts = rank_hot()
+        Post.rank_hot()
+        pagination = Post.query.order_by(Post.hot_index.desc()).paginate(
+            page=page, per_page=20, error_out=False
+        )
+        posts = pagination.items
     else:
-        abort()
-    return render_template('index.html', posts=posts)
+        abort(404)
+    return render_template('index.html', posts=posts, pagination=pagination)
 
 
-@main.route('/topic/<int:topic_id>')
+@main.route('/topic/<int:topic_id>', methods=['GET', 'POST'])
 def topic(topic_id):
+    page = request.args.get('page', 1, type=int)
     topic_title = Topic.query.filter_by(id=topic_id).first_or_404().title
-    print topic_title
-    posts = Post.query.filter_by(topic_id=topic_id).order_by(Post.date_created.desc()).all()
+    type = request.args.get('type')
+    if not type:
+        pagination = Post.query.filter_by(topic_id=topic_id).order_by(Post.date_created.desc()).paginate(
+            page=page, per_page=20, error_out=False
+        )
+        posts = pagination.items
+    elif type == 'essence':
+        Post.rank_hot(topic_id)
+        pagination = Post.query.order_by(Post.hot_index.desc()).paginate(
+            page=page, per_page=20, error_out=False
+        )
+        posts = pagination.items
+    else:
+        abort(404)
     if not posts:
         abort(404)
-    return render_template('topic.html', posts=posts, title=topic_title)
+    return render_template('topic.html', posts=posts, title=topic_title, pagination=pagination)
 
 
 @main.route('/upload/', methods=['GET', 'POST', 'OPTIONS'])
