@@ -15,6 +15,7 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     FLASKY_MAIL_SUBJECT_PREFIX = '[HUSTRunner]'
     FLASKY_MAIL_SENDER = 'HUSTRunner Admin <HUSTRunner@example.com>'
+    FLASK_ADMIN = 'polyval@mail.com'
 
     @staticmethod
     def init__app(app):

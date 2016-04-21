@@ -1,7 +1,7 @@
 from flask_script import Manager, Server, Shell
 from flask_migrate import Migrate, MigrateCommand
 from app import create_app, db
-from app.user.models import User, Role
+from app.user.models import User, Role, Follow
 from app.forum.models import Post, Topic, Comment
 
 app = create_app('testing')
@@ -33,6 +33,7 @@ def fake():
     User.generate_fake()
     Post.generate_fake()
     Comment.generate_fake()
+    Follow.generate_fake()
 
 
 @manager.command

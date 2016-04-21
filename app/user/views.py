@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 
 from . import user
 from .forms import EditProfileForm, EditProfileAdiminForm
-from .models import User, Role
+from .models import User, Role, Follow
 from ..forum.models import Post
 from .. import db
 from ..decorators import admin_required
@@ -15,6 +15,34 @@ def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts.order_by(Post.date_created.desc()).all()
     return render_template('user/profile.html', user=user, posts=posts)
+
+
+@user.route('/user/<username>/followees')
+def followees(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    pagination = user.followed.paginate(
+        page, per_page=20, error_out=False
+    )
+    followees = [{'user': item.followed, 'timestamp': item.timestamp}
+                 for item in pagination.items]
+    return render_template('followers.html', user=user, title=u'关注的人',
+                           endpoint='.followees',pagination=pagination,
+                           follows=followees)
+
+
+@user.route('/user/<username>/followers')
+def followers(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    pagination = user.followers.paginate(
+        page, per_page=20, error_out=False
+    )
+    followers = [{'user': item.follower, 'timestamp': item.timestamp}
+                 for item in pagination.items]
+    return render_template('followers.html', user=user, title=u'的关注者',
+                           endpoint='.followers',pagination=pagination,
+                           follows=followers)
 
 
 @user.route('/settings/profile', methods=['GET', 'POST'])

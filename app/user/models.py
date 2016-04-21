@@ -64,6 +64,28 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
+class Follow(db.Model):
+    __tablename__ = "follows"
+
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+
+    @staticmethod
+    def generate_fake(count=50):
+        from random import seed, randint
+        seed()
+        user_count = User.query.count()
+        for i in range(count):
+            u1 = User.query.offset(randint(0, user_count - 1)).first()
+            u2 = User.query.offset(randint(0, user_count - 1)).first()
+            if u1.is_following(u2):
+                continue
+            f = Follow(follower=u1, followed=u2)
+            db.session.add(f)
+        db.session.commit()
+
+
 class User(UserMixin, db.Model):
     """
     UserMixin provides default implementations for
@@ -93,6 +115,17 @@ class User(UserMixin, db.Model):
     comments = db.relationship("Comment", backref="author", lazy="dynamic")
     post_count = db.Column(db.Integer, default=0)
 
+    followed = db.relationship('Follow',
+                               foreign_keys=[Follow.follower_id],
+                               backref=db.backref('follower', lazy='joined'),
+                               lazy='dynamic',
+                               cascade='all, delete-orphan')
+    followers = db.relationship('Follow',
+                                foreign_keys=[Follow.followed_id],
+                                backref=db.backref('followed', lazy='joined'),
+                                lazy='dynamic',
+                                cascade='all, delete-orphan')
+
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:
@@ -112,7 +145,7 @@ class User(UserMixin, db.Model):
         for i in range(count):
             u = User(email=forgery_py.internet.email_address(),
                      username=forgery_py.internet.user_name(with_num=True),
-                     password=forgery_py.lorem_ipsum.word(),
+                     password='hustrunner',
                      confirmed=True,
                      signature=forgery_py.lorem_ipsum.word(),
                      date_joined=forgery_py.date.date(past=True))
@@ -207,6 +240,22 @@ class User(UserMixin, db.Model):
         """get the last time the user visit the website"""
         self.last_seen = datetime.utcnow()
         db.session.add(self)
+
+    def follow(self, user):
+        if not self.is_following(user):
+            f = Follow(follower=self, followed=user)
+            db.session.add(f)
+
+    def unfollow(self, user):
+        f = self.followed.filter_by(followed_id=user.id).first()
+        if f:
+            db.session.delete(f)
+
+    def is_following(self, user):
+        return self.followed.filter_by(followed_id=user.id).first() is not None
+
+    def is_followed_by(self, user):
+        return self.followers.filter_by(follower_id=user.id).first() is not None
 
     def __repr__(self):
         return '<User %r>' % self.username

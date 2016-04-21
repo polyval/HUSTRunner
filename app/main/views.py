@@ -66,7 +66,7 @@ def upload():
     action = request.args.get('action')
 
     # 解析JSON格式的配置文件
-    with open(os.path.join(current_app.static_folder, 'ueditor', 'php',
+    with open(os.path.join(current_app.static_folder, 'vendors', 'ueditor', 'php',
                            'config.json')) as fp:
         try:
             # 删除 `/**/` 之间的注释
