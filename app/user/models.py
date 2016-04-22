@@ -107,7 +107,7 @@ class User(UserMixin, db.Model):
     gender = db.Column(db.String(10))
     school = db.Column(db.String(100))
     avatar = db.Column(db.String(200))
-    signature = db.Column(db.Text)
+    signature = db.Column(db.String(100))
     about_me = db.Column(db.Text)
     # one to many, add author attribute to Post, this attribute refers to User Object
     posts = db.relationship("Post", backref="author", lazy="dynamic")

@@ -35,7 +35,7 @@ class Post(db.Model):
             p = Post(content_html=forgery_py.lorem_ipsum.paragraph(html=True),
                      title=forgery_py.lorem_ipsum.title(),
                      date_created=forgery_py.date.date(past=True),
-                     views=randint(0,1000),
+                     views=randint(0, 1000),
                      author=u,
                      topic=topic)
             p.slug = p.slugify()
@@ -108,6 +108,12 @@ class Comment(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
+    parent_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
+    children = db.relationship("Comment", backref=db.backref('parent',
+                    remote_side=[id]), lazy='dynamic')
+    votes = db.Column(db.Integer, default=1)
+    # TODO: nested comments
+
     @staticmethod
     def generate_fake(count=100):
         from random import seed, randint
@@ -116,6 +122,7 @@ class Comment(db.Model):
         seed()
         user_count = User.query.count()
         post_count = Post.query.count()
+        # parent comments
         for i in range(count):
             u = User.query.offset(randint(0, user_count - 1)).first()
             p = Post.query.offset(randint(0, post_count - 1)).first()
@@ -125,4 +132,25 @@ class Comment(db.Model):
                         post=p)
             db.session.add(c)
         db.session.commit()
+        # child comments
+        for i in range(3):
+            for i in range(count):
+                u = User.query.offset(randint(0, user_count - 1)).first()
+                parent_comments_count = Comment.query.count()
+                parent_comment = Comment.query.offset(randint(0, parent_comments_count - 1)).first()
+                c = Comment(content_html=forgery_py.lorem_ipsum.paragraph(html=True),
+                            date_created=forgery_py.date.date(past=True),
+                            author=u,
+                            parent=parent_comment)
+                db.session.add(c)
+            db.session.commit()
 
+    def get_margin_left(self):
+        depth = 0
+        comment = self
+        while comment.parent:
+            depth += 1
+            comment = comment.parent
+        margin_left = depth*15
+        margin_left = min(margin_left, 120)
+        return str(margin_left) + "px"
