@@ -47,7 +47,7 @@ class Post(db.Model):
         """Rank posts by its hot index
 
             hot_index = (views/10 + comment_count) / (date.now - date.created)
-            """
+        """
         if not topic_id:
             posts = Post.query.all()
         else:
@@ -112,7 +112,6 @@ class Comment(db.Model):
     children = db.relationship("Comment", backref=db.backref('parent',
                     remote_side=[id]), lazy='dynamic')
     votes = db.Column(db.Integer, default=1)
-    # TODO: nested comments
 
     @staticmethod
     def generate_fake(count=100):
@@ -145,12 +144,3 @@ class Comment(db.Model):
                 db.session.add(c)
             db.session.commit()
 
-    def get_margin_left(self):
-        depth = 0
-        comment = self
-        while comment.parent:
-            depth += 1
-            comment = comment.parent
-        margin_left = depth*15
-        margin_left = min(margin_left, 120)
-        return str(margin_left) + "px"
