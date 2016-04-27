@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 
 from flask_login import current_user, login_required
 
@@ -37,3 +37,21 @@ def view_post(slug):
     post.views += 1
     db.session.add(post)
     return render_template('article.html', post=post, comments=comments)
+
+
+@forum.route('/post/<slug>/comment', methods=['GET', 'POST'])
+def add_comment(slug):
+    if request.method == 'POST':
+        content = request.json['content']
+        parent_id = request.json['parent_id']
+        if parent_id:
+            comment = Comment(content_html=content,
+                              author=current_user._get_current_object(),
+                              parent=Comment.query.get(parent_id))
+        else:
+            comment = Comment(content_html=content,
+                              author=current_user._get_current_object(),
+                              post=Post.query.filter_by(slug=slug).first())
+        db.session.add(comment)
+        db.session.commit()
+        return jsonify(comment_id = comment.id, timestamp = comment.date_created)
