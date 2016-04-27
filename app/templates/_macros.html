@@ -27,3 +27,39 @@
     </li>
 </ul>
 {% endmacro %}
+
+{% macro followers_panel(follows, endpoint, user) %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <span>
+            <a href="{{ url_for('user.profile', username=user.username) }}">{{ user.username }}</a>
+            {% if endpoint == '.followees' %}关注了{{ user.followed.count() }}人
+            {% else %}被{{ user.followers.count() }}人关注{% endif %}
+        </span>
+    </div>
+    <div class="panel-body">
+        <div class="profile-body">
+            {% for follow in follows %}
+            <div class="user-brief">
+                <button class="btn-unfollow">取消关注</button>
+                <a href="{{ url_for('user.profile', username=follow.user.username) }}" class="avatar-link">
+                    <img src="{{ url_for('static', filename='profile.jpg') }}">
+                </a>
+                <div class="user-brief-medium">
+                    <h2>
+                        <a href="{{ url_for('user.profile', username=follow.user.username) }}">
+                            {{ follow.user.username }}
+                        </a>
+                    </h2>
+                    {% if follow.user.signature %}
+                    <div class="user-signature ">
+                        {{ follow.user.signature }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endmacro %}

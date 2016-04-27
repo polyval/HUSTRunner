@@ -1,4 +1,5 @@
 import os
+import platform
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -30,8 +31,12 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = \
-        'sqlite:////' + os.path.join(basedir, 'data-test.sqlite')
+    if platform.system() == 'Windows':
+        SQLALCHEMY_DATABASE_URI = \
+            'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
+    else:
+        SQLALCHEMY_DATABASE_URI = \
+            'sqlite:////' + os.path.join(basedir, 'data-test.sqlite')
 
 
 config = {
