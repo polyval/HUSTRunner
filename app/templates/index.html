@@ -33,9 +33,11 @@
             {{ post.content_html|safe }}
         </div>
         {% endfor %}
+        {% if pagination.has_prev or pagination.has_next %}
         <div class="pagination">
             {{ macros.pagination_widget(pagination, '.index') }}
         </div>
+        {% endif %}
     </div>
     <!--right-->
     <div class="col-md-4">

@@ -40,5 +40,8 @@ def create_app(config_name):
     from .forum import forum as forum_blueprint
     app.register_blueprint(forum_blueprint)
 
+    from .message import message as message_blueprint
+    app.register_blueprint(message_blueprint)
+
     return app
 

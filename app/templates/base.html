@@ -40,6 +40,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ url_for('user.profile', username=current_user.username) }}">我的主页</a></li>
+                        <li><a href="{{ url_for('message.inbox') }}">私信</a></li>
                         <li><a href="{{ url_for('user.edit_profile') }}">设置</a></li>
                         <li><a href="{{ url_for('auth.logout') }}">退出</a></li>
                     </ul>

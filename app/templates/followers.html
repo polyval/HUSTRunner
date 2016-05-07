@@ -1,0 +1,14 @@
+{% extends "user/profile.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}HUSTRunner- {{ title }} {{ user.username }}{% endblock %}
+
+{% block page_content %}
+{{ super() }}
+{% endblock %}
+{% block left_bottom %}
+{{ macros.followers_panel(follows, endpoint, user) }}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, endpoint, username = user.username) }}
+</div>
+{% endblock %}

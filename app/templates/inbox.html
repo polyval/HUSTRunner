@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}私信 - HUSTRunner{% endblock %}
+
+{% block head %}
+{{ super() }}
+{{ macros.ueditor() }}
+{% endblock %}
+
+{% block page_content %}
+<div class="col-md-8">
+	<div>
+		<button class="btn" data-toggle="modal" data-target="#replyModal" data-recipient="TODO">写私信</button>
+		<h4>我的私信</h4>
+	</div>
+	<div>
+		{% for conversation in conversations %}
+		<div>
+			<a href="{{ url_for('user.profile', username=conversation.from_user.username) }}">
+				{% if conversation.to_user.avatar %}
+				<img src="{{ conversation.from_user.avatar }}">
+				{% else %}
+				<img src="{{ url_for('static', filename='profile.jpg') }}">
+				{% endif %}
+			</a>
+			<div>
+				{% if conversation.last_message.user_id == current_user.id %}
+				我发送给 
+				<a href="{{ url_for('user.profile', username=conversation.to_user.username) }}">{{ conversation.to_user.username }}</a>
+                {% else %}
+                <a href="{{ url_for('user.profile', username=conversation.to_user.username) }}">{{ conversation.to_user.username }}</a>
+                {% endif %}
+				：{{ conversation.last_message.message|safe }}
+			</div>
+			<div>
+				<span>{{ conversation.last_message.message.date_created }}</span>
+				<a href="{{ url_for('message.view_conversation', conversation_id=conversation.id) }} ">共{{ conversation.messages|count }}条对话</a>
+				<a href="javascript:void(0)"  data-toggle="modal" data-target="#replyModal" data-recipient="{{ conversation.to_user.username }}">回复</a>
+				<a href="javascript:void(0)" class="delete" data-conversation="{{ conversation.id }}">删除</a>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+    {% if pagination.has_prev or pagination.has_next %}
+    <div class="pagination">
+            {{ macros.pagination_widget(pagination, '.inbox') }}
+    </div>
+    {% endif %}
+</div>
+<!-- Modal -->
+<div class="modal" id="replyModal" role="dialog" aria-labelledby="replyModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">发送私信</h4>
+			</div>
+			<div class="modal-body">
+
+				<dl>
+					<dt>发给：</dt>
+					<dd class="recipient">
+                        <input type="text" placeholder="输入用户名" class="form-control" style="display: none;">
+                        <span></span>               
+                    </dd>
+					<dt>内容：</dt>
+					<dd><script type="text/plain" id="editor"></script></dd>
+                    <div class="comment-actions">
+                        <a href="javascript:void(0)" data-dismiss="modal">取消</a>
+                        <button class="btn btn-sm btn-success send-message" data-dismiss="modal">回复</button>
+                    </div>
+				</dl>
+				
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    var ue = UE.getEditor('editor', {
+                initialFrameWidth:'100%',
+                initialFrameHeight:'100%',
+                elementPathEnabled : false,
+                wordCount:false,
+                enableAutoSave:false,
+                initialStyle:'p, span{font-size:14px;}',
+                toolbars:[['emotion']]
+            });
+
+    $(function(){
+    	$('#replyModal').on('show.bs.modal', function(event){
+    		var a = $(event.relatedTarget) // element that triggered the modal
+    		var recipient = a.data('recipient') // extract info from data-*
+    		var modal = $(this)
+            if(recipient == 'TODO'){
+                modal.find('.modal-body .recipient span').hide();
+                modal.find('.modal-body .recipient input').show();
+            }
+            else{
+                modal.find('.modal-body .recipient input').hide();
+                modal.find('.modal-body .recipient span').show();
+                modal.find('.modal-body .recipient span').text(recipient);
+            }
+    	});
+
+        var post_to = '{{ request.path }}'; 
+
+        $('.send-message').on('click', function(){
+            var recipient = $(this).parent().prevAll('.recipient').children('input').val() || $(this).parent().prevAll('.recipient').children('span').html();
+            var message = UE.getEditor('editor').getContent();
+
+            $.post(post_to, {
+                recipient: recipient,
+                message: message },
+                function(){
+                    location.reload();
+                }
+            );
+        });
+
+        $('.delete').on('click', function(){
+            var conversation_id = $(this).data('conversation'); 
+
+            $.post(post_to, {
+                conversation_id: conversation_id,
+                type: 'delete' },
+                function(){
+                    location.reload();
+                }
+            );
+        });
+          
+        })
+</script>
+{% endblock %}

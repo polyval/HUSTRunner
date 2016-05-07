@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}私信 - HUSTRunner{% endblock %}
+
+{% block head %}
+{{ super() }}
+{{ macros.ueditor() }}
+{% endblock %}
+
+{% block page_content %}
+<div class="col-md-8">
+	<div>
+	</div>
+	<div>
+		{% for message in messages %}
+		<div>
+			<a href="{{ url_for('user.profile', username=message.user_id.username) }}">
+				{% if message.user_id.avatar %}
+				<img src="{{ message.user_id.avatar }}">
+				{% else %}
+				<img src="{{ url_for('static', filename='profile.jpg') }}">
+				{% endif %}
+			</a>
+			<div>
+				{% if message.user_id == current_user.id %}
+				我:  
+				{% else %}
+				<a href="{{ url_for('user.profile', username=message.user_id.username) }}">{{ message.user_id.username }}</a>
+				{% endif %}
+				：{{ message.message|safe }}
+			</div>
+			<div>
+				<span>{{ message.date_created }}</span>
+				{% if message.user_id != current_user.user_id %}
+				<a href="javascript:void(0)">回复</a>
+				{% endif %}
+				<a href="javascript:void(0)">删除</a>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+{% endblock %}

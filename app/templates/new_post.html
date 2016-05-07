@@ -1,13 +1,12 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 
 {% block title %}HUSTRunner-发帖{% endblock %}
 
 {% block head %}
 {{ super() }}
-<script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='vendors/ueditor/ueditor.config.js') }}"></script>
-<script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='vendors/ueditor/ueditor.all.min.js') }}"> </script>
-<script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='vendors/ueditor/lang/zh-cn/zh-cn.js') }}"></script>
+{{ macros.ueditor() }}
 {% endblock %}
 
 {% block page_content %}
