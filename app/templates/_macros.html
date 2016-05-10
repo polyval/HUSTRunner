@@ -69,3 +69,16 @@
 <script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='vendors/ueditor/ueditor.all.min.js') }}"> </script>
 <script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='vendors/ueditor/lang/zh-cn/zh-cn.js') }}"></script>
 {% endmacro %}
+
+{% macro replyeditor(zindex=900) %}
+var ue = UE.getEditor('editor', {
+            initialFrameWidth:'100%',
+            initialFrameHeight:'100%',
+            elementPathEnabled : false,
+            wordCount:false,
+            zIndex: {{ zindex }},
+            enableAutoSave:false,
+            initialStyle:'p, span{font-size:14px;}',
+            toolbars:[['emotion']]
+        });
+{% endmacro %}

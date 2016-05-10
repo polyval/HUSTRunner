@@ -1,10 +1,11 @@
-a{cursor:pointer}
+a{
+	cursor:pointer;
+	outline: none;
+}
 a:link{
 	color:#37a;
 	text-decoration:none}
-a:visited{
-	color:#669;
-	text-decoration:none}
+
 a:hover{
 	color:#fff;
 	text-decoration:none;
@@ -12,18 +13,38 @@ a:hover{
 a:active{
 	color:#fff;
 	text-decoration:none;
+	outline: none;
 	background:#f93}
+ul{
+    list-style:none;
+}
+/*navbar*/
 .top-nav-link{
 	height: 55px;
 }
 .container{
 	max-width: 990px;
 }
-.dropdown-menu li.active > a:focus{
-	background-color: transparent;
+.navbar-avatar{
+    width:27px;
+    height:27px;
 }
-/*index*/
-.dropdown:hover .dropdown-menu {
+.navbar-default .navbar-nav>.open>a,
+.navbar-default .navbar-nav>.open>a:focus,
+ .navbar-default .navbar-nav>.open>a:hover,
+.navbar-default .navbar-nav>.active>a,
+.navbar-default .navbar-nav>.active>a:focus,
+.navbar-default .navbar-nav>.active>a:hover{
+    background-color:transparent;
+    color:#777;
+}
+/*
+.navbar-nav  li .dropdown-menu {}
+.navbar-nav .active .dropdown-menu li a{
+    color:#428bca;
+}
+*/
+.dropdown:hover .dropdown-menu{
     display: block;
     margin-top: 0;
  }
@@ -31,6 +52,10 @@ a:active{
 .post-info li {
 	display: inline;
 	padding-right: 10px;
+}
+/*index*/
+h4 a:visited{
+    color:#669;
 }
 /*article*/
 .article{
@@ -43,7 +68,21 @@ a:active{
 }
 .color-green{
 	color:#072;
-
+}
+.operation {
+    float:right;
+}
+.operation a, .comment-actions a{
+    font-size:12px;
+    padding-right:5px;
+}
+.operation a:link, .operation a:visited,
+.comment-actions a:link, .comment-actions a:visited{
+    color:#aaa;
+}
+.operation a:hover, .comment-actions a:hover{
+    background-color:#aaa;
+    color:#fff;
 }
 /*new-post*/
 .new-post{
@@ -56,26 +95,40 @@ a:active{
 /*comments*/
 .comments {
 	max-width: 800px;
+	padding-left:0;
 }
 .comments li {
 	margin-bottom: 10px;
 }
+.child .comment-item{
+    margin-left:30px;
+}
+
 .user-face {
 	float: left;
-	width: 48px;
-	height: 48px;
-	margin-right: 20px;
+	width: 25px;
+	height: 25px;
+	margin-right: 5px;
 }
 .user-face a img {
-	width: 48px;
-	height: 48px;
+    top:5px;
+	width: 25px;
+	height: 25px;
+	border-radius:50%;
+}
+.user-face a:hover{
+    background:transparent;
 }
 .comment-content {
 	padding-left: 0px;
 	margin: 0px;
 	width: auto;
+	margin-bottom:20px;
 	position: relative;
 	overflow: hidden;
+}
+.comment-content .edui-editor.edui-default{
+    margin-right:0px;
 }
 .bg-img-green{
 	background: #f2fbf2;
@@ -87,6 +140,15 @@ a:active{
 .pubtime{
 	margin-left: 12px;
 }
+.comment-form{
+    padding-top:10px;
+    clear:both;
+}
+.comment-actions{
+    float:right;
+    margin-top:10px;
+}
+
 
 /*settings*/
 .settings-sections {
@@ -120,4 +182,170 @@ a:active{
 }
 .nav-tabs li.active a{
 	color: #666;
+}
+/*profile*/
+.main-content{
+    padding-left:0px;
+    padding-right:0px;
+}
+.top{
+	margin-bottom: 10px;
+}
+.name{
+	font-weight: 700;
+	color: #222;
+	font-size: 1.4em;
+}
+.avatar-editor{
+	width: 100px;
+	height: 100px;
+	float: left;
+	padding: 0px;
+	overflow: hidden;
+}
+.avatar{
+	width: 100px;
+	height: 100px;
+	float: left;
+}
+.user-describe{
+    margin-left:115px;
+}
+
+.user-describe span{
+	color: #666;
+}
+.user-describe span+span{
+	margin-left: 6px;
+	padding-left: 10px;
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: #eee;  
+}
+/*profile-sidebar*/
+.sidebar{
+	padding-left: 50px;
+}
+.follow-info{
+	overflow: hidden;
+	border-bottom: 1px solid #eee;
+	margin-bottom: 15px;
+}
+.follow-info a{
+	float: left;
+	padding:2px 30px 8px 0
+}
+.follow-info a+a{
+	padding-left: 20px;
+	border-left: 1px solid #eee;
+}
+.follow-info a:hover{
+	background:transparent;
+}
+.follow-info a span{
+	color: #999;
+	font-size: 13px;
+	font-weight: 400;
+}
+.follow-info a strong{
+	font-size: 16px;
+	font-weight: 700;
+	color: #666;
+}
+.follow-info a label{
+	font-size: 13px;
+	font-weight: 400;
+	color: #666;
+	vertical-align: 1px;
+}
+/*followers*/
+.user-brief{
+	padding-top: 12px;
+	padding-bottom: 12px;
+	overflow: hidden;
+}
+.user-brief .btn-unfollow{
+	float: right;
+	width: 78px;
+	height: 22px;
+	padding: 0;
+	line-height: 22px;
+	font-size: 13px;
+}
+.user-brief a:hover{
+    background:transparent;
+    color:#259;
+    font-weight:700;
+    text-decoration:underline;
+}
+.user-brief .avatar-link{
+	float: left;
+}
+.user-brief .avatar-link img{
+	width: 50px;
+	height: 50px;
+	margin: 2px 10px 0 0;
+}
+.user-brief-medium h2{
+	font-weight: 700;
+	font-size: 14px;
+	margin: 0;
+}
+.user-signature{
+    color:#999;
+    font-weight:400;
+}
+/*inbox*/
+.modal-body{
+    padding: 30px;
+}
+.header{
+    margin-bottom: 10px;
+}
+.header button{
+    float: right;
+    margin-top: -10px;
+    outline: none !important;
+}
+.pm-item-wrap{
+    border-top: solid 1px #ccc;
+    clear: right;
+}
+.pm-item{
+    padding: 12px 0;
+    min-height: 50px;
+}
+.pm-item+.pm-item{
+    border-top: 1px solid #eee;
+}
+.link-avatar50{
+    float: left;
+    height: 50px;
+    width: 50px;
+    margin: 0 10px 0 0;
+}
+.link-avatar50 img{
+    height: 50px;
+    width: 50px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 4px;
+}
+.pm-item-main{
+    margin: 0 0 5px 62px;
+}
+.pm-item-meta{
+    margin: 0 0 0 63px;
+    text-align: right;
+}
+.item-time{
+    float: left;
+    color: #999;
+    font-size: 12px;
+}
+.section{
+    margin: 0 0 10px;
+}
+.section button{
+    margin: 10px 0 20px 0;
 }

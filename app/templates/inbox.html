@@ -10,31 +10,31 @@
 
 {% block page_content %}
 <div class="col-md-8">
-	<div>
+	<div class="header">
 		<button class="btn" data-toggle="modal" data-target="#replyModal" data-recipient="TODO">写私信</button>
 		<h4>我的私信</h4>
 	</div>
-	<div>
+	<div class="pm-item-wrap">
 		{% for conversation in conversations %}
-		<div>
-			<a href="{{ url_for('user.profile', username=conversation.from_user.username) }}">
+		<div class="pm-item">
+			<a href="{{ url_for('user.profile', username=conversation.from_user.username) }} " class="link-avatar50">
 				{% if conversation.to_user.avatar %}
 				<img src="{{ conversation.from_user.avatar }}">
 				{% else %}
 				<img src="{{ url_for('static', filename='profile.jpg') }}">
 				{% endif %}
 			</a>
-			<div>
+			<div class="pm-item-main">
 				{% if conversation.last_message.user_id == current_user.id %}
-				我发送给 
+				<span>我发送给</span> 
 				<a href="{{ url_for('user.profile', username=conversation.to_user.username) }}">{{ conversation.to_user.username }}</a>
                 {% else %}
                 <a href="{{ url_for('user.profile', username=conversation.to_user.username) }}">{{ conversation.to_user.username }}</a>
                 {% endif %}
 				：{{ conversation.last_message.message|safe }}
 			</div>
-			<div>
-				<span>{{ conversation.last_message.message.date_created }}</span>
+			<div class="pm-item-meta">
+				<span class= "item-time">{{ moment(conversation.last_message.date_created).format("YYYY-MM-DD HH:mm") }}</span>
 				<a href="{{ url_for('message.view_conversation', conversation_id=conversation.id) }} ">共{{ conversation.messages|count }}条对话</a>
 				<a href="javascript:void(0)"  data-toggle="modal" data-target="#replyModal" data-recipient="{{ conversation.to_user.username }}">回复</a>
 				<a href="javascript:void(0)" class="delete" data-conversation="{{ conversation.id }}">删除</a>
@@ -49,7 +49,7 @@
     {% endif %}
 </div>
 <!-- Modal -->
-<div class="modal" id="replyModal" role="dialog" aria-labelledby="replyModal">
+<div class="modal" id="replyModal" role="dialog" aria-labelledby="replyModal" data-backdrop="static">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -83,21 +83,13 @@
 {% block scripts %}
 {{ super() }}
 <script type="text/javascript">
-    var ue = UE.getEditor('editor', {
-                initialFrameWidth:'100%',
-                initialFrameHeight:'100%',
-                elementPathEnabled : false,
-                wordCount:false,
-                enableAutoSave:false,
-                initialStyle:'p, span{font-size:14px;}',
-                toolbars:[['emotion']]
-            });
-
+    {{ macros.replyeditor(zindex=1100) }}
     $(function(){
     	$('#replyModal').on('show.bs.modal', function(event){
-    		var a = $(event.relatedTarget) // element that triggered the modal
-    		var recipient = a.data('recipient') // extract info from data-*
-    		var modal = $(this)
+    		var a = $(event.relatedTarget); // element that triggered the modal
+    		var recipient = a.data('recipient'); // extract info from data-*
+    		var modal = $(this);
+
             if(recipient == 'TODO'){
                 modal.find('.modal-body .recipient span').hide();
                 modal.find('.modal-body .recipient input').show();
@@ -106,20 +98,20 @@
                 modal.find('.modal-body .recipient input').hide();
                 modal.find('.modal-body .recipient span').show();
                 modal.find('.modal-body .recipient span').text(recipient);
-            }
+            };
     	});
 
         var post_to = '{{ request.path }}'; 
 
         $('.send-message').on('click', function(){
             var recipient = $(this).parent().prevAll('.recipient').children('input').val() || $(this).parent().prevAll('.recipient').children('span').html();
-            var message = UE.getEditor('editor').getContent();
+            var message = UE.getEditor('editor').getContent().slice(3,-4);
 
             $.post(post_to, {
                 recipient: recipient,
                 message: message },
                 function(){
-                    location.reload();
+                    location.reload(); // reload page
                 }
             );
         });
@@ -136,6 +128,6 @@
             );
         });
           
-        })
+        });
 </script>
 {% endblock %}

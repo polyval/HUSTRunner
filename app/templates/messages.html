@@ -10,35 +10,93 @@
 
 {% block page_content %}
 <div class="col-md-8">
-	<div>
+	<div class="section">
+		<span>发私信给</span>
+		<span>{{ to_user.username }}</span>
 	</div>
-	<div>
-		{% for message in messages %}
-		<div>
-			<a href="{{ url_for('user.profile', username=message.user_id.username) }}">
-				{% if message.user_id.avatar %}
-				<img src="{{ message.user_id.avatar }}">
+	<div class="section">
+		<a href="{{ url_for('message.inbox') }}">« 返回</a>
+	</div>
+	<div class="section">
+		<script type="text/plain" id="editor"></script>
+		<button class="btn btn-sm btn-success pull-right send-message">发送</button>
+	</div>
+	<div class="pm-item-wrap">
+		{% for message in messages|reverse %}
+		<div class="pm-item" id="{{ message.id }}">
+			<a href="{{ url_for('user.profile', username=message.user.username) }}" class="link-avatar50">
+				{% if message.user.avatar %}
+				<img src="{{ message.user.avatar }}">
 				{% else %}
 				<img src="{{ url_for('static', filename='profile.jpg') }}">
 				{% endif %}
 			</a>
-			<div>
+			<div class="pm-item-main">
 				{% if message.user_id == current_user.id %}
 				我:  
 				{% else %}
-				<a href="{{ url_for('user.profile', username=message.user_id.username) }}">{{ message.user_id.username }}</a>
+				<a href="{{ url_for('user.profile', username=message.user.username) }}">{{ message.user.username }}</a>
 				{% endif %}
 				：{{ message.message|safe }}
 			</div>
-			<div>
-				<span>{{ message.date_created }}</span>
-				{% if message.user_id != current_user.user_id %}
-				<a href="javascript:void(0)">回复</a>
-				{% endif %}
-				<a href="javascript:void(0)">删除</a>
+			<div class="pm-item-meta">
+				<span class="item-time">{{ moment(message.date_created).format("YYYY-MM-DD HH:mm") }}</span>
+				<a href="javascript:void(0)" data-id="{{ message.id }}" data-toggle="modal" data-target="#deleteModal">删除</a>
 			</div>
 		</div>
 		{% endfor %}
 	</div>
 </div>
+
+<!-- Modal -->
+<div class="modal" id="deleteModal" role="dialog" aria-labelledby="deleteModal" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">删除私信</h4>
+			</div>
+			<div class="modal-body">
+                你确定要删除这封私信么？	
+			</div>
+			<div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		        <button type="button" class="btn btn-primary delete" data-dismiss="modal">确定</button>
+	        </div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+	{{ macros.replyeditor() }}
+	$(function(){
+		var post_to = '{{ request.path }}'
+		$('#deleteModal').on('show.bs.modal', function(event){
+			id = $(event.relatedTarget).data('id');
+			$('.delete').on('click', function(){
+				$.post(post_to, {
+					message_id: id},
+					function(){
+						$('#'+id).remove();
+					}
+				);
+			});
+		});
+		$('.send-message').on('click', function(){
+			var message = UE.getEditor('editor').getContent().slice(3,-4);
+			$.post(post_to, {
+				recipient: {{ to_user.id }},
+				message: message},
+				function(){
+					location.reload();
+				}
+			);
+		});
+	})
+</script>
 {% endblock %}

@@ -30,7 +30,7 @@
                 <div class="bg-img-green">
                     <h4>
                         <a href="{{ url_for('user.profile', username=comment.author.username) }}">{{ comment.author.username }}</a>
-                        <span class="pubtime">{{ comment.date_created }}</span>
+                        <span class="pubtime">{{ moment(comment.date_created).format("YYYY-MM-DD HH:mm") }}</span>
                     </h4>
                 </div>
                 <div class="content">
@@ -158,9 +158,9 @@
                        '<a href="#"><img class="pil" src=' + '"' +
                        "{{ url_for('static', filename='profile.jpg')}}" +
                        '"' + '></a></div>' + '<div class="comment-content">' +
-                        '<div class="bg-img-green"><h4>' + '<a href=' + '"' + 
+                        '<div class="bg-img-green"><h4>' + '<a href=' + '"' +
                         url + '">' + username + '</a>' +
-                        '<span class="pubtime">' + result.timestamp + '</span>' +
+                        '<span class="pubtime">' + moment(result.timestamp).format("YYYY-MM-DD HH:mm") + '</span>' +
                         '</h4></div><div class="content">' + content +
                         '</div><div class="operation">' +
                         '<a href="javascript:void(0)" class="reply" data-reply="' +

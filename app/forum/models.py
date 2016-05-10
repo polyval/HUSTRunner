@@ -111,6 +111,7 @@ class Comment(db.Model):
     parent_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
     children = db.relationship("Comment", backref=db.backref('parent',
                     remote_side=[id]), lazy='dynamic')
+    # TODO: votes in template
     votes = db.Column(db.Integer, default=1)
 
     @staticmethod
