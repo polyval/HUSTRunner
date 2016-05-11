@@ -47,7 +47,8 @@ def add_comment(slug):
         if parent_id:
             comment = Comment(content_html=content,
                               author=current_user._get_current_object(),
-                              parent=Comment.query.get(parent_id))
+                              parent=Comment.query.get(parent_id),
+                              post=Post.query.filter_by(slug=slug).first())
         else:
             comment = Comment(content_html=content,
                               author=current_user._get_current_object(),

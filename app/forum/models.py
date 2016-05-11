@@ -141,6 +141,7 @@ class Comment(db.Model):
                 c = Comment(content_html=forgery_py.lorem_ipsum.paragraph(html=True),
                             date_created=forgery_py.date.date(past=True),
                             author=u,
+                            post=parent_comment.post,
                             parent=parent_comment)
                 db.session.add(c)
             db.session.commit()
