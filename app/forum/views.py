@@ -33,7 +33,7 @@ def new_post():
 @forum.route('/post/<slug>', methods=['GET', 'POST'])
 def view_post(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
-    comments = Comment.query.filter_by(post_id=post.id).all()
+    comments = Comment.query.filter(Comment.post_id==post.id, Comment.parent==None).all()
     post.views += 1
     db.session.add(post)
     return render_template('article.html', post=post, comments=comments)

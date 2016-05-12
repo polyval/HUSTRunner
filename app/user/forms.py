@@ -3,6 +3,7 @@ from flask_wtf import Form
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, regexp, Optional
 from ..user.models import User, Role
+from flask_login import current_user
 
 USERNAME_RE = r'^[\u4e00-\u9fa5_A-Za-z][\u4e00-\u9fa5_a-zA-Z0-9.]+$'
 is_username = regexp(USERNAME_RE,
@@ -17,7 +18,7 @@ class EditProfileForm(Form):
     submit = SubmitField(u'提交')
     # TODO: There should have an interval of changing username
     def validate_username(self, field):
-        if field.data != self.username and User.query.filter_by(username=field.data).first():
+        if field.data != current_user.username and User.query.filter_by(username=field.data).first():
             raise ValidationError(u'用户名已存在')
 
 

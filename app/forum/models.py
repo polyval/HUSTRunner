@@ -15,8 +15,10 @@ class Post(db.Model):
     content_html = db.Column(db.Text, nullable=False)
     title = db.Column(db.String(200), nullable=False)
     slug = db.Column(db.String(200), unique=True)
-    date_created = db.Column(db.DateTime, index=True, default=datetime.utcnow())
+    date_created = db.Column(
+        db.DateTime, index=True, default=datetime.utcnow())
     date_modified = db.Column(db.DateTime)
+    # TODO: Modify post
     views = db.Column(db.Integer, default=0)
     hot_index = db.Column(db.Integer, default=0)
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
@@ -104,15 +106,16 @@ class Comment(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     content_html = db.Column(db.Text)
-    date_created = db.Column(db.DateTime, index=True, default=datetime.utcnow())
+    date_created = db.Column(
+        db.DateTime, index=True, default=datetime.utcnow())
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
     parent_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
     children = db.relationship("Comment", backref=db.backref('parent',
-                    remote_side=[id]), lazy='dynamic')
+                                                             remote_side=[id]), lazy='dynamic')
     # TODO: votes in template
-    votes = db.Column(db.Integer, default=1)
+    votes = db.Column(db.Integer, default=0)
 
     @staticmethod
     def generate_fake(count=100):
@@ -137,7 +140,8 @@ class Comment(db.Model):
             for i in range(count):
                 u = User.query.offset(randint(0, user_count - 1)).first()
                 parent_comments_count = Comment.query.count()
-                parent_comment = Comment.query.offset(randint(0, parent_comments_count - 1)).first()
+                parent_comment = Comment.query.offset(
+                    randint(0, parent_comments_count - 1)).first()
                 c = Comment(content_html=forgery_py.lorem_ipsum.paragraph(html=True),
                             date_created=forgery_py.date.date(past=True),
                             author=u,
@@ -146,3 +150,36 @@ class Comment(db.Model):
                 db.session.add(c)
             db.session.commit()
 
+    def has_voted(self, user_id):
+        """
+        Check whether the user vote already
+        """
+        vote = CommentVote.query.filter(CommentVote.user_id == user_id,
+                                        CommentVote.comment_id == self.id).first()
+        return False if not vote else True
+
+    def vote(self, user_id):
+        """
+        if a user has voted the comment, the next vote would be
+        treated as unvote
+        """
+        if not self.has_voted(user_id):
+            vote = CommentVote(user_id=user_id, comment_id=self.id)
+            db.session.add(vote)
+            self.votes += 1
+        else:
+            CommentVote.query.filter(CommentVote.user_id == user_id,
+                                     CommentVote.comment_id == self.id).delete()
+            self.votes -= 1
+        db.session.commit()
+
+# TODO: vote table
+
+
+class CommentVote(db.Model):
+    __tablename__ = "comment_votes"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    comment_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
+    date_created = db.Column(db.DateTime, default=datetime.utcnow())

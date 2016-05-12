@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+from sqlalchemy import or_
 from flask import request, redirect, url_for, render_template, flash
 from flask_login import current_user, login_required
 
 from . import user
 from .forms import EditProfileForm, EditProfileAdiminForm
 from .models import User, Role, Follow
-from ..forum.models import Post
+from ..forum.models import Post, Comment
 from .. import db
 from ..decorators import admin_required
 
@@ -13,11 +14,17 @@ from ..decorators import admin_required
 @user.route('/user/<username>')
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-    posts = user.posts.order_by(Post.date_created.desc()).all()
-    return render_template('user/profile.html', user=user, posts=posts)
+    posts = Post.query.filter_by(author_id=user.id).all()
+    comments = Comment.query.filter_by(author_id=user.id).all()
+    activities = posts + comments
+    activities = sorted(activities, key=lambda activity: activity.date_created, reverse=True)
+    # activities = Post.query.join(Comment).filter(or_(Post.author_id == user.id,
+                                                # Comment.author_id == user.id)).order_by('date_created').all()
+    return render_template('user/profile.html', user=user, activities=activities)
 
 
 @user.route('/user/<username>/followees')
+@login_required
 def followees(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
@@ -27,11 +34,12 @@ def followees(username):
     followees = [{'user': item.followed, 'timestamp': item.timestamp}
                  for item in pagination.items]
     return render_template('followers.html', user=user, title=u'关注的人',
-                           endpoint='.followees',pagination=pagination,
+                           endpoint='.followees', pagination=pagination,
                            follows=followees)
 
 
 @user.route('/user/<username>/followers')
+@login_required
 def followers(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
@@ -41,7 +49,7 @@ def followers(username):
     followers = [{'user': item.follower, 'timestamp': item.timestamp}
                  for item in pagination.items]
     return render_template('followers.html', user=user, title=u'的关注者',
-                           endpoint='.followers',pagination=pagination,
+                           endpoint='.followers', pagination=pagination,
                            follows=followers)
 
 
@@ -85,6 +93,21 @@ def edit_profile_admin(id):
     form.signature.data = user.signature
     form.about_me.data = user.about_me
     return render_template('user/edit_profile.html', form=form, user=user)
+
+
+@user.route('/user/<username>/posts')
+def posts(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = user.posts.order_by(Post.date_created.desc()).all()
+    return render_template('user/posts.html', user=user, posts=posts)
+
+
+@user.route('/user/<username>/comments')
+def comments(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    comments = Comment.query.filter_by(author_id=user.id).order_by(
+                Comment.date_created.desc()).all()
+    return render_template('user/comments.html', user=user, comments=comments)
 
 
 @user.route('/settings/account', methods=['GET', 'POST'])

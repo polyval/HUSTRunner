@@ -43,5 +43,8 @@ def create_app(config_name):
     from .message import message as message_blueprint
     app.register_blueprint(message_blueprint)
 
+    from .apis import api as api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix= '/apis')
+
     return app
 

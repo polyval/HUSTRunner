@@ -26,11 +26,12 @@
             <div class="user-face">
                 <a href="#"><img class="pil" src="{{ url_for('static', filename='profile.jpg') }}"></a>
             </div>
-            <div class="comment-content">
+            <div class="comment-content" id="{{ comment.id }}comment">
                 <div class="bg-img-green">
                     <h4>
                         <a href="{{ url_for('user.profile', username=comment.author.username) }}">{{ comment.author.username }}</a>
                         <span class="pubtime">{{ moment(comment.date_created).format("YYYY-MM-DD HH:mm") }}</span>
+                        <span class="vote-nums">{% if comment.votes > 0 %}{{ comment.votes }}赞{% endif %}</span>
                     </h4>
                 </div>
                 <div class="content">
@@ -41,6 +42,11 @@
                 </div>
 
                 <div class="operation">
+                    {% if comment.has_voted(current_user.id) %}
+                    <a href="javascript:void(0)" class="vote" data-voted="true"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>取消赞</a>
+                    {% else %}
+                    <a href="javascript:void(0)" class="vote" data-voted="false"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>赞</a>
+                    {% endif %}
                     <a href="javascript:void(0)" class="reply" data-reply="{{ comment.id }}">添加回复</a>
                     {% if comment.children.count() > 0 %}
                     <a href="javascript:void(0)" class="collapse-comments" data-childId="{{ comment.id }}_children"
@@ -121,7 +127,34 @@
         $(document).on('click', '.comment-actions a', function() {
             $(this).closest('.comment-actions').closest('.comment-bar').hide();
         });
-
+        // vote
+        $(document).on('click', '.vote', function(){
+            {% if current_user.is_authenticated %}
+            var $vote_button = $(this);
+            var comment_id = $vote_button.next('.reply').attr('data-reply');
+            var post_to = '{{ url_for('apis.vote_comment') }}';
+            if ($vote_button.attr('data-voted') === "false"){
+                $vote_button.html('取消赞');
+                $vote_button.attr('data-voted', 'true');
+            } else{
+                $vote_button.html('赞');
+                $vote_button.attr('data-voted', 'false');
+            }
+            $.post(post_to, { comment_id: comment_id }, 
+                    function(response){
+                        var new_vote_count = response.new_votes.toString();
+                        if(new_vote_count != '0'){
+                                $vote_button.parent().prevAll('.bg-img-green').children().children('.vote-nums').html(new_vote_count+'赞');
+                            }else{
+                                $vote_button.parent().prevAll('.bg-img-green').children().children('.vote-nums').html('');
+                            };
+                    }
+            );
+            {% else %}
+            alert("登陆后才能点赞哦")
+            {% endif %}
+        });
+        // add comment
         $(document).on('click', '.comment-btn', function() {
             var parent_id;
             var $parent;
