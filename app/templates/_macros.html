@@ -41,7 +41,11 @@
         <div class="profile-body">
             {% for follow in follows %}
             <div class="user-brief">
-                <button class="btn-unfollow">取消关注</button>
+                {% if current_user.is_following(follow.user) %}
+                <button class="btn btn-default btn-unfollow toggle-follow" data-id="{{ follow.user.id }}">取消关注</button>
+                {% else %}
+                <button class="btn btn-default btn-follow toggle-follow" data-id="{{ follow.user.id }}">关注</button>
+                {% endif %}
                 <a href="{{ url_for('user.profile', username=follow.user.username) }}" class="avatar-link">
                     <img src="{{ url_for('static', filename='profile.jpg') }}">
                 </a>

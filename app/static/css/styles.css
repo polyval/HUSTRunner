@@ -4,9 +4,9 @@ a{
 }
 a:link{
 	color:#37a;
-	text-decoration:none}
+}
 
-a:hover{
+/*a:hover{
 	color:#fff;
 	text-decoration:none;
 	background:#37a}
@@ -14,9 +14,38 @@ a:active{
 	color:#fff;
 	text-decoration:none;
 	outline: none;
-	background:#f93}
+	background:#f93}*/
 ul{
     list-style:none;
+}
+.fa{
+    margin-right:5px;
+}
+.badge{
+    border-radius: 16px;
+    border: 1px solid #b11331;
+    position: absolute;
+    min-width: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    background-color: #bf1031;
+    color: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,.15);
+    line-height: 16px;
+    padding: 0 5px;
+    text-align: center;
+}
+.plain-noti{
+    top: 8px;
+    left: 32px;
+}
+.dropdown-toggle .badge{
+    left: 30px;
+    top: 8px;
+    z-index: 12;
+}
+.dropdown-menu .badge{
+    margin-left: 12px;
 }
 /*navbar*/
 .top-nav-link{
@@ -75,6 +104,7 @@ h4 a:visited{
 .operation a, .comment-actions a{
     font-size:12px;
     padding-right:5px;
+    text-decoration: none;
 }
 .operation a:link, .operation a:visited,
 .comment-actions a:link, .comment-actions a:visited{
@@ -121,7 +151,7 @@ h4 a:visited{
 }
 .comment-content {
 	padding-left: 0px;
-	margin: 0px;
+	margin-left:30px;
 	width: auto;
 	margin-bottom:20px;
 	position: relative;
@@ -139,6 +169,10 @@ h4 a:visited{
 }
 .pubtime{
 	margin-left: 12px;
+}
+.vote-nums{
+    float: right;
+    margin-right: 10px;
 }
 .comment-form{
     padding-top:10px;
@@ -188,6 +222,31 @@ h4 a:visited{
     padding-left:0px;
     padding-right:0px;
 }
+.profile-card{
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 25px;
+}
+.profile-main{
+    padding: 12px 18px;
+}
+.section-head{
+    border-bottom: 1px solid #EEE;
+    padding: 7px 14px;
+}
+.section-head h4{
+    color: #666;
+    font-weight: 700;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+}
+.profile-navbar{
+    border-bottom: none;
+    border-top: 1px solid #ddd;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+}
 .top{
 	margin-bottom: 10px;
 }
@@ -210,6 +269,7 @@ h4 a:visited{
 }
 .user-describe{
     margin-left:115px;
+    margin-bottom: 110px;
 }
 
 .user-describe span{
@@ -264,7 +324,7 @@ h4 a:visited{
 	padding-bottom: 12px;
 	overflow: hidden;
 }
-.user-brief .btn-unfollow{
+.user-brief .toggle-follow{
 	float: right;
 	width: 78px;
 	height: 22px;
@@ -348,4 +408,17 @@ h4 a:visited{
 }
 .section button{
     margin: 10px 0 20px 0;
+}
+/*posts*/
+.item-wrap{
+    margin-top: 25px;
+    padding-left: 0px;
+}
+.item-wrap li{
+    border-bottom: 1px dotted #EEE;
+}
+.time{
+    float: right;
+    color: #999;
+    margin-left: 50px;
 }

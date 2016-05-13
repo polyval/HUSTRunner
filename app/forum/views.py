@@ -15,6 +15,7 @@ def new_post():
     form = PostForm()
     if form.validate_on_submit():
         content = request.form['editorValue']
+        # TODO bug no topic was selected
         topic = Topic.query.filter_by(title=form.topic.data).first()
         author = current_user._get_current_object()
         title = form.title.data
