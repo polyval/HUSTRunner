@@ -1,9 +1,10 @@
-from flask import request, abort, jsonify
+from flask import request, abort, jsonify, Response
 from flask_login import current_user, login_required
 
 from . import api
 from ..forum.models import Comment
-from ..user.models import User
+from ..user.models import User, Permission
+from ..decorators import permission_required
 
 
 @api.route('/comments/vote', methods=['POST'])
@@ -30,3 +31,9 @@ def toggle_follow():
         user.follow(user=to_user)
         print unfollow
     return jsonify(msg=0)
+
+@api.route('/comments/<int:id>', methods=['DELETE'])
+@permission_required(Permission.MODERATE_COMMENTS)
+def delete_comment(id):
+    Comment.query.filter_by(id=id).delete()
+    return jsonify(delete=id)

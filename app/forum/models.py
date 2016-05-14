@@ -114,7 +114,6 @@ class Comment(db.Model):
     parent_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
     children = db.relationship("Comment", backref=db.backref('parent',
                                                              remote_side=[id]), lazy='dynamic')
-    # TODO: votes in template
     votes = db.Column(db.Integer, default=0)
 
     @staticmethod
@@ -172,8 +171,6 @@ class Comment(db.Model):
                                      CommentVote.comment_id == self.id).delete()
             self.votes -= 1
         db.session.commit()
-
-# TODO: vote table
 
 
 class CommentVote(db.Model):

@@ -10,19 +10,26 @@
 
 {% block page_content %}
 <div class="col-md-8 article">
-    <div>
+    <div class="article-main">
         <h2>{{ post.title }}</h2>
         <h5>
             <span class="from">来自: <a href="{{ url_for('user.profile', username=post.author.username) }}">{{ post.author.username }}</a>
             </span>
-            <span class="color-green">{{ post.date_created }}</span>
+            <span class="color-green">{{ moment(post.date_created).format("YYYY-MM-DD HH:mm") }}</span>
         </h5>
         <div class="body">{{ post.content_html|safe }}</div>
-        <hr>
+        <div class="operation">
+            {% if current_user.id == post.author.id %}
+            <a href="javascript:void(0)" class="modify">修改</a>
+            {% endif %}
+            {% if current_user.is_administrator() %}
+            <a href="javascript:void(0)" class="delete-post">删除</a>
+            {% endif %}
+        </div>
     </div>
     <ul class="comments">
         {% for comment in comments recursive %}
-        <li class="comment-item clear-fix">
+        <li class="comment-item clear-fix" id="{{ comment.id }}parent">
             <div class="user-face">
                 <a href="#"><img class="pil" src="{{ url_for('static', filename='profile.jpg') }}"></a>
             </div>
@@ -42,6 +49,9 @@
                 </div>
 
                 <div class="operation">
+                    {% if current_user.is_administrator() or comment.author.id == current_user.id %}
+                    <a href="javascript:void(0)" class="delete-comment" data-toggle="modal" data-target="#deleteModal" data-id="{{ comment.id }}">删除</a>
+                    {% endif %}
                     {% if comment.has_voted(current_user.id) %}
                     <a href="javascript:void(0)" class="vote" data-voted="true"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>取消赞</a>
                     {% else %}
@@ -69,13 +79,32 @@
         </li>
         {% endfor %}
     </ul>
-    <hr>
     <div>
         <form>
             <script type="text/plain" id="editor"></script>
             <br>
         </form>
         <button class="btn btn-success comment-btn">回复</button>
+    </div>
+</div>
+
+<div class="modal" id="deleteModal" role="dialog" aria-labelledby="deleteModal" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">删除</h4>
+            </div>
+            <div class="modal-body">
+                你确定要删除评论么？    
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary delete" data-dismiss="modal">确定</button>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -107,6 +136,14 @@
             if(count){
                 $(this).html($(this).html() == '回复'+'('+count+')' ? '收起回复' : '回复'+'('+count+')');
             }
+        });
+
+        $(document).on('mouseenter', '.comment-content, .article-main', function(){
+            $(this).children('.operation').css('visibility', 'visible');
+        });
+
+        $(document).on('mouseleave', '.comment-content, .article-main', function(){
+            $(this).children('.operation').css('visibility', 'hidden');
         });
 
         $(document).on('click', '.reply', function() {
@@ -154,6 +191,21 @@
             alert("登陆后才能点赞哦")
             {% endif %}
         });
+        // delete comment
+        $('#deleteModal').on('show.bs.modal', function(event){
+            var id = $(event.relatedTarget).data('id');
+            var post_to = '/apis/comments/' + id
+            $('.delete').on('click', function(){
+                $.ajax({
+                    url: post_to,
+                    type: 'DELETE',
+                    success: function(){
+                        $('#'+id+'parent').remove();
+                    }
+                })
+            });
+        });
+
         // add comment
         $(document).on('click', '.comment-btn', function() {
             var parent_id;
@@ -170,7 +222,7 @@
                 content = UE.getEditor(parent_id+'reply').getContent();
             } else {
                 parent_id = '';
-                $parent = $(this).parent('div').prev().prev('.comments').children('li').last();
+                $parent = $(this).parent('div').prev('.comments').children('li').last();
                 content = UE.getEditor('editor').getContent();
                 UE.getEditor('editor').execCommand('cleardoc');
             }
@@ -196,6 +248,8 @@
                         '<span class="pubtime">' + moment(result.timestamp).format("YYYY-MM-DD HH:mm") + '</span>' +
                         '</h4></div><div class="content">' + content +
                         '</div><div class="operation">' +
+                        '<a href="javascript:void(0)" class="delete-comment" data-toggle="modal" data-target="#deleteModal" data-id="' +
+                        result.comment_id + '">删除</a>' +
                         '<a href="javascript:void(0)" class="reply" data-reply="' +
                         result.comment_id + '">' + '添加回复' + '</a></div>' +
                         '<div class="comment-bar" style="display:none;">' +
