@@ -15,6 +15,9 @@ a:active{
 	text-decoration:none;
 	outline: none;
 	background:#f93}*/
+.modal-dialog{
+    margin-top: 100px;
+}
 ul{
     list-style:none;
 }
@@ -91,15 +94,30 @@ h4 a:visited{
 	max-width: 800px;
 	margin-top: 30px;
 }
+.article-main{
+    overflow: hidden;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+}
 .from{
-	padding-right: 14px;
 	color:#666666;
+}
+.from span.label{
+    margin-left: 10px; 
 }
 .color-green{
 	color:#072;
+    margin-left: 14px;
 }
 .operation {
+    visibility: hidden;
     float:right;
+}
+
+@media screen and (max-width: 600px) {
+  .operation {
+    visibility: visible;
+  }
 }
 .operation a, .comment-actions a{
     font-size:12px;
@@ -116,11 +134,8 @@ h4 a:visited{
 }
 /*new-post*/
 .new-post{
-	width: 800px;
+	width: 70%;
 	margin: 20px auto 40px;
-}
-.new-post .form-group{
-	margin-right: 20px;
 }
 /*comments*/
 .comments {
@@ -153,7 +168,7 @@ h4 a:visited{
 	padding-left: 0px;
 	margin-left:30px;
 	width: auto;
-	margin-bottom:20px;
+	margin-bottom:5px;
 	position: relative;
 	overflow: hidden;
 }
@@ -162,13 +177,21 @@ h4 a:visited{
 }
 .bg-img-green{
 	background: #f2fbf2;
+    padding: 3px 0;
 }
 .bg-img-green h4{
 	font-size: 12px;
 	margin-top: 0px;
+    margin-bottom: 0px;
+}
+.label{
+    vertical-align: top;
 }
 .pubtime{
 	margin-left: 12px;
+}
+.content{
+    margin-top: 5px;
 }
 .vote-nums{
     float: right;
@@ -242,6 +265,7 @@ h4 a:visited{
     padding: 0;
 }
 .profile-navbar{
+    margin-top: 20px;
     border-bottom: none;
     border-top: 1px solid #ddd;
     border-top-right-radius: 4px;
@@ -269,13 +293,19 @@ h4 a:visited{
 }
 .user-describe{
     margin-left:115px;
-    margin-bottom: 110px;
 }
 
 .user-describe span{
 	color: #666;
 }
-.user-describe span+span{
+.short-info{
+    margin-bottom: 20px;
+}
+.description{
+    padding-top: 12px;
+    border-top: 1px dotted #eee;
+}
+.short-info span+span{
 	margin-left: 6px;
 	padding-left: 10px;
 	border-left-width: 1px;
@@ -421,4 +451,31 @@ h4 a:visited{
     float: right;
     color: #999;
     margin-left: 50px;
+}
+
+:target {
+    -webkit-animation: target-fade 1s;
+    -moz-animation: target-fade 1s;
+    -o-animation: target-fade 1s;
+    animation: target-fade 1s;
+}
+
+@-webkit-keyframes target-fade {
+    from { background-color: red; }
+    to { background-color: transparent; }
+}
+
+@-moz-keyframes target-fade {
+    from { background-color: red; }
+    to { background-color: transparent; }
+}
+
+@-o-keyframes target-fade {
+    from { background-color: red; }
+    to { background-color: transparent; }
+}
+
+@keyframes target-fade {
+    from { background-color: red; }
+    to { background-color: transparent; }
 }

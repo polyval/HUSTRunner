@@ -69,10 +69,10 @@ class Post(db.Model):
         slug_title = slugify(self.title)
         if Post.query.filter_by(slug=slug_title).first():
             date = datetime.today()
-            slug = '{0:s}/{1:d}/{2:d}/{3:d}/{4:s}'.format(
+            slug = '{0:s}{1:d}{2:d}{3:d}{4:s}'.format(
                 str(date.year)[2:], date.month, date.day, date.microsecond, slug_title)
             if Post.query.filter_by(slug=slug).first():
-                slug = '{0:d}/{1:d}/{2:d}/{3:d}/{4:s}'.format(
+                slug = '{0:d}{1:d}{2:d}{3:d}{4:s}'.format(
                     self.author_id, date.year, date.month, date.day, slug_title
                 )
             return slug

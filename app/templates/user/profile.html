@@ -1,43 +1,23 @@
-{% extends "base.html" %}
+{% extends "user/_profile.html" %}
 
-{% block title %}{{ user.username }}-HUSTRunner{% endblock %}
-
-{% block page_content %}
-<div class="main-content col-md-8">
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <div class="top">
-                <span class="name">{{ user.username }}</span>
-            </div>
-            <div class="profile-body">
-                <div class="avatar-editor col-md-2">
-                    <img src="{{ url_for('static', filename='profile.jpg') }}" class="avatar">
-                </div>
-                <div class="user-describe">
-                    {% if user.school %}{<span>{ user.school }}</span>{% endif %}
-                    <span>{{ user.gender }}</span>
-                    <span>{{ user.signature }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% block left_bottom %}{% endblock %}
+{% block left_bottom %}
+<div class="profile-card">
+<div class="section-head">
+    <h4>最新动态</h4>
 </div>
-<div class="sidebar col-md-4">
-    <div class="follow-info">
-        <a href="{{ url_for('user.followees', username=user.username) }}">
-            <span>关注了</span>
-            <br>
-            <strong>{{ user.followed.count() }}</strong>
-            <label>人</label>
-        </a>
-        <a href="{{ url_for('user.followers', username=user.username ) }}">
-            <span>关注者</span>
-            <br>
-            <strong>{{ user.followers.count() }}</strong>
-            <label>人</label>
-        </a>
-    </div>
-
+<div class="profile-main">
+    <ul class="item-wrap">
+        {% for activity in activities %}
+        <li>
+            <span class="time">{{ moment(activity.date_created).format("YYYY年MM月DD日 HH:mm") }}</span>
+            {% if activity.title %}
+            <a href="{{ url_for('forum.view_post', slug=activity.slug) }}">{{ activity.title }}</a>
+            {% else %}
+            <a href="{{ url_for('forum.view_post', slug=activity.post.slug) }}#{{ activity.id }}comment">{{ activity.content_html|safe }}</a>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 </div>
 {% endblock %}

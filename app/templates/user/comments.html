@@ -1,0 +1,20 @@
+{% extends "user/_profile.html" %}
+
+{% block title %}{{ user.username }} 的回复-HUSTRunner{% endblock %}
+{% block left_bottom %}
+<div class="profile-card">
+<div class="section-head">
+    <h4>回复</h4>
+</div>
+<div class="profile-main">
+    <ul class="item-wrap">
+        {% for comment in comments %}
+        <li>
+            <span class="time">{{ moment(comment.date_created).format("YYYY年MM月DD日 HH:mm") }}</span>
+            <a href="{{ url_for('forum.view_post', slug=comment.post.slug) }}#{{ comment.id }}comment">{{ comment.content_html|safe }}</a>
+        </li>
+        {% endfor%}
+    </ul>
+</div>
+</div>
+{% endblock %}

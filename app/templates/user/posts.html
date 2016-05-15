@@ -1,0 +1,20 @@
+{% extends "user/_profile.html" %}
+
+{% block title %}{{ user.username }} 发表的文章-HUSTRunner{% endblock %}
+{% block left_bottom %}
+<div class="profile-card">
+<div class="section-head">
+    <h4>文章</h4>
+</div>
+<div class="profile-main">
+    <ul class="item-wrap">
+        {% for post in posts %}
+        <li>
+            <span class="time">{{ moment(post.date_created).format("YYYY年MM月DD日 HH:mm") }}</span>
+            <a href="{{ url_for('forum.view_post', slug=post.slug) }}">{{ post.title }}</a>
+        </li>
+        {% endfor%}
+    </ul>
+</div>
+</div>
+{% endblock %}

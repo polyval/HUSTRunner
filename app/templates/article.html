@@ -15,6 +15,12 @@
         <h5>
             <span class="from">来自: <a href="{{ url_for('user.profile', username=post.author.username) }}">{{ post.author.username }}</a>
             </span>
+            {% if post.author.is_administrator() %}
+            <span class="label label-primary">站长</span>
+            {% endif %}
+            {% if post.author.role.name == 'Moderator' %}
+            <span class="label label-primary">管理员</span>
+            {% endif %}
             <span class="color-green">{{ moment(post.date_created).format("YYYY-MM-DD HH:mm") }}</span>
         </h5>
         <div class="body">{{ post.content_html|safe }}</div>
@@ -37,6 +43,9 @@
                 <div class="bg-img-green">
                     <h4>
                         <a href="{{ url_for('user.profile', username=comment.author.username) }}">{{ comment.author.username }}</a>
+                        {% if comment.author.is_administrator() %}
+                        <span class="label label-primary">站长</span>
+                        {% endif %}
                         <span class="pubtime">{{ moment(comment.date_created).format("YYYY-MM-DD HH:mm") }}</span>
                         <span class="vote-nums">{% if comment.votes > 0 %}{{ comment.votes }}赞{% endif %}</span>
                     </h4>

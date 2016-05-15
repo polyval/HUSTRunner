@@ -29,7 +29,13 @@
 <script type="text/javascript">
     //实例化编辑器
     var ue = UE.getEditor('editor', {
-        serverUrl: "/upload/"
+        serverUrl: "/upload/",
+        initialFrameWidth:'100%',
+        initialFrameHeight:'100%',
+        toolbars: [
+            ['undo', 'redo'],
+            ['bold', 'italic', 'underline', 'simpleupload', 'strikethrough', 'emotion', 'superscript', 'subscript', 'formatmatch', 'autotypeset', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'cleardoc']
+        ]
     });
 </script>
 {% endblock %}
