@@ -2,7 +2,7 @@
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, regexp, Optional
-from ..user.models import User, Role
+from .models import User, Role
 from flask_login import current_user
 
 USERNAME_RE = r'^[\u4e00-\u9fa5_A-Za-z][\u4e00-\u9fa5_a-zA-Z0-9.]+$'

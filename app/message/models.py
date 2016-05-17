@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from app import db
-from ..user.models import User
+from ..forum.models import Post, Comment, CommentVote
 
 
 class Conversation(db.Model):
@@ -44,7 +44,7 @@ class Conversation(db.Model):
 
 class Message(db.Model):
     __tablename__ = "messages"
-    # message is mutual
+    # two-way message
     id = db.Column(db.Integer, primary_key=True)
     conversation_id = db.Column(db.Integer, db.ForeignKey("conversations.id"),
                                 nullable=False)
@@ -55,3 +55,79 @@ class Message(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow())
 
     user = db.relationship("User", lazy="joined")
+
+
+class Notification(db.Model):
+    """
+    target_type: post, comment, vote, following
+    target: post_id, comment_id...
+    """
+    __tablename__ = 'notifications'
+
+    id = db.Column(db.Integer, primary_key=True)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow())
+    sender_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    receive_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    target = db.Column(db.Integer, nullable=False)
+    target_type = db.Column(db.String(20), nullable=False)
+    unread = db.Column(db.Boolean, default=True)
+
+    @staticmethod
+    def generate_fake(count=20):
+        # TODO: DRY IT
+        import forgery_py
+        from random import randint, seed
+        from ..user.models import User
+        seed()
+        p_count = Post.query.count()
+        c_count = Comment.query.count()
+        u_count = User.query.count()
+        v_count = CommentVote.query.count()
+        for i in range(count):
+            p_notify = Notification(date_created=forgery_py.date.date(past=True),
+                                    sender_id=randint(0, u_count - 1),
+                                    receive_id=1,
+                                    target=randint(0, p_count - 1),
+                                    target_type='post',
+                                    unread=True if randint(0, count) % 2 else False,
+                                    )
+            c_notify = Notification(date_created=forgery_py.date.date(past=True),
+                                    sender_id=randint(0, u_count - 1),
+                                    receive_id=1,
+                                    target=randint(0, c_count - 1),
+                                    target_type='comment',
+                                    unread=True if randint(0, count) % 2 else False,
+                                    )
+            u_notify = Notification(date_created=forgery_py.date.date(past=True),
+                                    sender_id=randint(0, u_count - 1),
+                                    receive_id=1,
+                                    target=randint(0, u_count - 1),
+                                    target_type='following',
+                                    unread=True if randint(0, count) % 2 else False,
+                                    )
+            v_notify = Notification(date_created=forgery_py.date.date(past=True),
+                                    sender_id=randint(0, u_count - 1),
+                                    receive_id=1,
+                                    target=randint(0, v_count - 1),
+                                    target_type='vote',
+                                    unread=True if randint(0, count) % 2 else False,
+                                    )
+            db.session.add(p_notify)
+            db.session.add(c_notify)
+            db.session.add(u_notify)
+            db.session.add(v_notify)
+        db.session.commit()
+
+
+class NotifyConfig(db.Model):
+    __tablename__ = 'notifysettings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    # receive personal message from any user
+    pm_all = db.Column(db.Boolean, default=True)
+    be_followed = db.Column(db.Boolean, default=True)
+    # 0, receive all 1, all from person I followed 2, block
+    post_be_voted = db.Column(db.Integer, default=0)
+    comment_be_voted = db.Column(db.Integer, default=0)
+    comment = db.Column(db.Integer, default=0)

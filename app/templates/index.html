@@ -30,7 +30,7 @@
             <li>浏览 {{ post.views }}</li>
         </ul>
         <div class="post-body">
-            {{ post.content_html|safe }}
+            {{ post.content_html|safe|truncate(100) }}
         </div>
         {% endfor %}
         {% if pagination.has_prev or pagination.has_next %}
@@ -51,6 +51,5 @@
 
         </div>
     </div>
-
 </div>
 {% endblock %}

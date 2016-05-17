@@ -1,9 +1,12 @@
 from datetime import datetime
+from itertools import groupby
+
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
+from sqlalchemy import func, and_
 
 from app import db
 from .. import login_manager
@@ -27,7 +30,8 @@ class Role(db.Model):
     name = db.Column(db.String(64), unique=True)
     default = db.Column(db.Boolean, default=False, index=True)
     permissions = db.Column(db.Integer)
-    # backref add role attribute to User model, this attribute can use to access Role model
+    # backref add role attribute to User model, this attribute can use to
+    # access Role model
     user = db.relationship('User', backref='role', lazy='dynamic')
 
     @staticmethod
@@ -67,8 +71,10 @@ class Role(db.Model):
 class Follow(db.Model):
     __tablename__ = "follows"
 
-    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    follower_id = db.Column(
+        db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    followed_id = db.Column(
+        db.Integer, db.ForeignKey('users.id'), primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
 
     @staticmethod
@@ -87,6 +93,7 @@ class Follow(db.Model):
 
 
 class User(UserMixin, db.Model):
+
     """
     UserMixin provides default implementations for
     is_authenticated, is_active, is_anonymous, get_id
@@ -109,7 +116,9 @@ class User(UserMixin, db.Model):
     avatar = db.Column(db.String(200))
     signature = db.Column(db.String(100))
     about_me = db.Column(db.Text)
-    # one to many, add author attribute to Post, this attribute refers to User Object
+    # TODO: label marathon, half marathon
+    # one to many, add author attribute to Post, this attribute refers to User
+    # Object
     posts = db.relationship("Post", backref="author", lazy="dynamic")
     # topics = db.relationship("Topic", backref="user", lazy="dynamic")
     comments = db.relationship("Comment", backref="author", lazy="dynamic")
@@ -163,6 +172,15 @@ class User(UserMixin, db.Model):
         if not days_registered:
             return 1
         return days_registered
+
+    @property
+    def unread_count(self):
+        """Returns the unread notifications count for the user"""
+        return len(self.unread_notifications)
+
+    @property
+    def unread_notifications(self):
+        return self.get_unread_notifications()
 
     @property
     def password(self):
@@ -228,10 +246,32 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         return True
 
+    def get_unread_notifications(self):
+        """
+        get unread notifications grouped by day, target_type, target_id
+        :return nested list
+            inner list:
+            [(day, target_type, target, notification),...]
+        """
+        # avoid circular import
+        from ..message.models import Notification
+        # get all unread notifications
+        unread = Notification.query.filter(Notification.receive_id == self.id,
+                                           Notification.unread).all()
+        messy = []
+        for notif in unread:
+            messy.append(
+                (notif.date_created.strftime('%Y-%m-%d'), notif.target_type, notif.target, notif))
+        messy.sort(key=lambda x:(x[0],x[1],x[2]))
+        unread_notifications = []
+        for key, group in groupby(messy, key=lambda x:(x[0],x[1],x[2])):
+            unread_notifications.append([noti for noti in group])
+        return unread_notifications
+
     def can(self, permissions):
         """ Check whether the user has permissions"""
-        return self.role is not None and \
-               (self.role.permissions & permissions) == permissions  # bitwise operation
+        return self.role is not None and (self.role.permissions & permissions) == permissions
+        # bitwise operation
 
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
@@ -267,6 +307,7 @@ def load_user(user_id):
 
 
 class AnonymousUser(AnonymousUserMixin):
+
     def can(self, permissions):
         return False
 

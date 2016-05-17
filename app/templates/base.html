@@ -30,17 +30,18 @@
                 <li><a href="{{ url_for('main.topic', topic_id=2) }}" class="top-nav-link">技术交流</a></li>
                 <li><a href="{{ url_for('main.topic', topic_id=3) }}" class="top-nav-link">赛事活动</a></li>
                 <li><a href="{{ url_for('main.topic', topic_id=4) }}" class="top-nav-link">灌水</a></li>
+                <li><a href="#"><span>消息</span>{% if current_user.is_authenticated %}{% if current_user.unread_count > 0 %}<span class="badge plain-noti">{{ current_user.unread_count }}</span>{% endif %}{% endif %}</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="{{ url_for('static', filename='profile.jpg') }}" class="navbar-avatar">
+                        <img src="{{ url_for('static', filename='profile.jpg') }}" class="navbar-avatar"><!-- <span class="badge">1</span> -->
                         {{ current_user.username }} <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ url_for('user.profile', username=current_user.username) }}">我的主页</a></li>
-                        <li><a href="{{ url_for('message.inbox') }}">私信</a></li>
+                        <li><a href="{{ url_for('message.inbox') }}">私信<!-- <span class="badge">1</span> --></a></li>
                         <li><a href="{{ url_for('user.edit_profile') }}">设置</a></li>
                         <li><a href="{{ url_for('auth.logout') }}">退出</a></li>
                     </ul>
@@ -74,5 +75,10 @@
 {{ moment.lang("zh-cn") }}
 <script>
     $('a[href="' + this.location.pathname + '"]').parents('li,ul').addClass('active');
+    window.setTimeout(function() {
+    $(".alert-warning").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove();
+    });
+    }, 2000);
 </script>
 {% endblock %}
