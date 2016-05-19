@@ -10,7 +10,11 @@
                 <span class="name">{{ user.username }}</span>
             </div>
             <div class="avatar-editor col-md-2">
-                <img src="{{ url_for('static', filename='profile.jpg') }}" class="avatar">
+                <form id="avatar_form" action="/avatar" enctype="multipart/form-data" style="display:none;" method="POST" target="avatar_iframe">
+                    <input id="avatar_input" name="picture" type="file" class="file" accept="image/*">
+                </form>
+                <img src="{{ current_user.avatar }}" class="avatar" data-toggle="tooltip" data-placement="bottom" title="更换头像">
+                <iframe id='avatar_iframe' name="avatar_iframe" style="display: none;"></iframe>
             </div>
             <div class="user-describe">
                 <div class="short-info">
@@ -48,4 +52,41 @@
         </a>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    $(function(){
+        $('.avatar').click(function(click){
+            $('#avatar_input').click();
+        });
+
+        $('[data-toggle="tooltip"]').tooltip({
+            container: 'body' // http://stackoverflow.com/questions/18194705/display-bootstrap-popovers-outside-divs-with-overflowhidden
+        });
+
+        $('input[type=file]').on('change', function(event){
+            $('#avatar_form').submit();
+        });
+
+        $('#avatar_form').on('submit',(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                type:'POST',
+                url: $(this).attr('action'),
+                data:formData,
+                cache:false,
+                contentType: false,
+                processData: false,
+                success:function(response){
+                    $('.avatar, .navbar-avatar').attr('src', response.src);
+                },
+            });
+        }));
+
+    })
+</script>
 {% endblock %}

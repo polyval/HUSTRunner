@@ -2,7 +2,6 @@
 from datetime import datetime
 from itertools import groupby
 
-
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app
@@ -114,7 +113,7 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow())
     gender = db.Column(db.String(10))
     school = db.Column(db.String(100))
-    avatar = db.Column(db.String(200))
+    avatar = db.Column(db.String(200), default='/static/avatar/profile.jpg')
     signature = db.Column(db.String(100))
     about_me = db.Column(db.Text)
     # TODO: label marathon, half marathon
@@ -277,15 +276,15 @@ class User(UserMixin, db.Model):
         unread_notifications = []
         for key, group in groupby(messy, key=lambda x: (x[0], x[1], x[2])):
             unread_notifications.append(
-                {'date':key[0], 'action': key[1], 'entity': key[2],
-                'notify':[noti[3] for noti in group] })
+                {'date': key[0], 'action': key[1], 'entity': key[2],
+                 'notify': [noti[3] for noti in group]})
         return unread_notifications
 
     def get_notify_count(self):
         from ..message.models import Notification
         notify_count = db.session.query(func.count(Notification.id)).\
             filter(Notification.unread == True,
-                      Notification.receive_id == self.id).\
+                   Notification.receive_id == self.id).\
             group_by(func.date(Notification.date_created),
                      Notification.action,
                      Notification.target,
@@ -296,8 +295,8 @@ class User(UserMixin, db.Model):
         from ..message.models import Notification
         action_notify_count = db.session.query(func.count(Notification.id)).\
             filter(Notification.unread == True,
-                      Notification.receive_id == self.id,
-                      Notification.action == action).\
+                   Notification.receive_id == self.id,
+                   Notification.action == action).\
             group_by(func.date(Notification.date_created),
                      Notification.target,
                      Notification.target_type).count()

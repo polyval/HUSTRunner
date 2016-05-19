@@ -37,7 +37,7 @@
         {% for comment in comments recursive %}
         <li class="comment-item clear-fix" id="{{ comment.id }}parent">
             <div class="user-face">
-                <a href="#"><img class="pil" src="{{ url_for('static', filename='profile.jpg') }}"></a>
+                <a href="#"><img class="pil" src="{{ comment.author.avatar }}"></a>
             </div>
             <div class="comment-content" id="{{ comment.id }}comment">
                 <div class="bg-img-green">
@@ -250,7 +250,7 @@
                     var write_string =
                          '<li class="comment-item clear-fix"><div class="user-face">' +
                        '<a href="#"><img class="pil" src=' + '"' +
-                       "{{ url_for('static', filename='profile.jpg')}}" +
+                       "{{ current_user.avatar }}" +
                        '"' + '></a></div>' + '<div class="comment-content">' +
                         '<div class="bg-img-green"><h4>' + '<a href=' + '"' +
                         url + '">' + username + '</a>' +

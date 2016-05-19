@@ -1,4 +1,4 @@
-from flask import request, abort, jsonify, Response
+from flask import request, abort, jsonify
 from flask_login import current_user, login_required
 
 from . import api

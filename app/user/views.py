@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+import uuid
+import imghdr
+import os
+
 from sqlalchemy import or_
-from flask import request, redirect, url_for, render_template, flash
+from flask import request, redirect, url_for, render_template, flash, current_app, jsonify
 from flask_login import current_user, login_required
 
 from . import user
@@ -17,9 +22,10 @@ def profile(username):
     posts = Post.query.filter_by(author_id=user.id).all()
     comments = Comment.query.filter_by(author_id=user.id).all()
     activities = posts + comments
-    activities = sorted(activities, key=lambda activity: activity.date_created, reverse=True)
+    activities = sorted(
+        activities, key=lambda activity: activity.date_created, reverse=True)
     # activities = Post.query.join(Comment).filter(or_(Post.author_id == user.id,
-                                                # Comment.author_id == user.id)).order_by('date_created').all()
+    # Comment.author_id == user.id)).order_by('date_created').all()
     return render_template('user/profile.html', user=user, activities=activities)
 
 
@@ -72,6 +78,38 @@ def edit_profile():
     return render_template('user/edit_profile.html', form=form)
 
 
+@user.route('/avatar', methods=['POST'])
+@login_required
+def avatar():
+    img = request.files['picture']
+    if img:
+        dir = os.path.join(current_app.static_folder, 'avatar')
+
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+        # get unique filename
+        while True:
+            filename = datetime.now().strftime(
+                '%Y%m%d%H%M%S') + uuid.uuid4().hex
+            path = "%s/%s" % (dir, filename)
+            if not os.path.exists(path):
+                break
+        try:
+            img.save(path)
+            # Tests the image data contained in the file named by path
+            ext = imghdr.what(path)
+            new_path = "%s.%s" % (path, ext)
+            os.rename(path, new_path)
+        except:
+            print "------------------Error: save or open %s" % path
+
+    src = url_for('static', filename='avatar/%s' % os.path.basename(new_path))
+    current_user.avatar = src
+    db.session.add(current_user)
+    db.session.commit()
+    return jsonify(src=src)
+
+
 @user.route('/edit-profile/<int:id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -106,7 +144,7 @@ def posts(username):
 def comments(username):
     user = User.query.filter_by(username=username).first_or_404()
     comments = Comment.query.filter_by(author_id=user.id).order_by(
-                Comment.date_created.desc()).all()
+        Comment.date_created.desc()).all()
     return render_template('user/comments.html', user=user, comments=comments)
 
 
@@ -114,3 +152,10 @@ def comments(username):
 @login_required
 def account():
     return render_template('user/security_setting.html', user=current_user)
+
+
+@user.route('/settings/notification', methods=['GET', 'POST'])
+@login_required
+def notification():
+    # TODO
+    return render_template('user/notify_setting.html')

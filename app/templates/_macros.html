@@ -47,7 +47,7 @@
                 <button class="btn btn-default btn-follow toggle-follow" data-id="{{ follow.user.id }}">关注</button>
                 {% endif %}
                 <a href="{{ url_for('user.profile', username=follow.user.username) }}" class="avatar-link">
-                    <img src="{{ url_for('static', filename='profile.jpg') }}">
+                    <img src="{{ follow.user.avatar }}">
                 </a>
                 <div class="user-brief-medium">
                     <h2>

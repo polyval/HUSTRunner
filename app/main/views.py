@@ -4,7 +4,6 @@ import re
 import json
 
 from flask import request, render_template, make_response, current_app, abort
-
 from . import main
 from ..forum.models import Post, Topic
 from ..uploader import Uploader
