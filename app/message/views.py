@@ -88,12 +88,18 @@ def view_conversation(conversation_id):
             db.session.add(end_conversation)
             db.session.commit()
             new_message = Message(user_id=current_user.id,
-                    message=request.form['message'],
-                    conversation_id=conversation.id)
+                                  message=request.form['message'],
+                                  conversation_id=conversation.id)
             end_new_message = Message(user_id=current_user.id,
-                    message=request.form['message'],
-                    conversation_id=end_conversation.id)
+                                      message=request.form['message'],
+                                      conversation_id=end_conversation.id)
             db.session.add(new_message)
             db.session.add(end_new_message)
             db.session.commit()
     return render_template("messages.html", messages=conversation.messages, to_user=to_user)
+
+
+@message.route('/notifications')
+@login_required
+def notifications():
+    return render_template("notifications.html")

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}消息-HUSTRunner{% endblock %}
+
+{% block page_content %}
+<div class="col-md-8">
+    <div class="notis">
+        <div class="noti-header">
+            全部消息
+            <span class="unread-amount"></span>
+        </div>
+        <div class="notis-wrap">
+            {% for group in current_user.unread_notifications|groupby('date')|reverse %}
+            <div class="day">
+                <span>{{ group.grouper }}</span>
+            </div>
+            {% for notify in group.list %}
+            <div>
+                {% if notify.action == 'vote' %}
+                <div>获得{{ notify['notify']|length }}赞同:
+                    {% if notify['entity'].slug %}
+                    <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].slug) }}">{{ notify['entity'].title }}</a></span>
+                    {% elif notify['entity'] %}
+                    <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].post.slug) }}#{{ notify['entity'].id }}comment">{{ notify['entity'].post.title }}</a>中的评论</span>
+                    {% endif %}
+                    来自
+                    {% for noti in notify['notify'] %}
+                    <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a></span>
+                    {% endfor %}</div>
+                {% elif notify.action == 'comment' %}
+                    <div>
+                        {% for noti in notify['notify'] %}
+                        <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a></span>
+                        {% endfor %}
+                        {% if notify['entity'].slug %}回复了你的文章
+                        <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].slug) }}">{{ notify['entity'].title }}</a></span>
+                        {% elif notify['entity'] %}回复了你在
+                        <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].post.slug) }}#{{ notify['entity'].id }}comment">{{ notify['entity'].post.title }}</a>中的评论</span>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div>
+                        {% for noti in notify['notify'] %}
+                        <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a>关注了你</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

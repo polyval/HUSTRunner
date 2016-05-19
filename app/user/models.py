@@ -277,7 +277,8 @@ class User(UserMixin, db.Model):
         unread_notifications = []
         for key, group in groupby(messy, key=lambda x: (x[0], x[1], x[2])):
             unread_notifications.append(
-                [key[0], key[1], key[2]]+[noti[3] for noti in group])
+                {'date':key[0], 'action': key[1], 'entity': key[2],
+                'notify':[noti[3] for noti in group] })
         return unread_notifications
 
     def get_notify_count(self):

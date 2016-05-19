@@ -60,7 +60,7 @@ def delete_comment(id):
 def noti_count():
     # get the category of notifications
     action = request.form.get('action')
-    noti = Notification.query.filter(Notification.receive_id == current_user.id,
+    Notification.query.filter(Notification.receive_id == current_user.id,
                     Notification.action == action).update({Notification.unread: False})
     db.session.commit()
     return jsonify(new_count=current_user.notify_count)
