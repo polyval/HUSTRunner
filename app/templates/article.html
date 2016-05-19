@@ -231,7 +231,7 @@
                 content = UE.getEditor(parent_id+'reply').getContent();
             } else {
                 parent_id = '';
-                $parent = $(this).parent('div').prev('.comments').children('li').last();
+                $parent = $(this).parent('div').prev('.comments');
                 content = UE.getEditor('editor').getContent();
                 UE.getEditor('editor').execCommand('cleardoc');
             }
@@ -272,7 +272,7 @@
                     if (nested == 'true')  {
                         $parent.prepend(write_string);
                     } else {
-                        $parent.after(write_string);
+                        $parent.append(write_string); //TODO: comment not append
                     }
                 },
             });
