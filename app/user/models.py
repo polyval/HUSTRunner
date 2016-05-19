@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from itertools import groupby
 
@@ -174,9 +175,20 @@ class User(UserMixin, db.Model):
         return days_registered
 
     @property
-    def unread_count(self):
-        """Returns the unread notifications count for the user"""
-        return len(self.unread_notifications)
+    def notify_count(self):
+        return self.get_notify_count()
+
+    @property
+    def vote_notify_count(self):
+        return self.action_notify_count(action='vote')
+
+    @property
+    def comment_notify_count(self):
+        return self.action_notify_count(action='comment')
+
+    @property
+    def follow_notify_count(self):
+        return self.action_notify_count(action='follow')
 
     @property
     def unread_notifications(self):
@@ -249,24 +261,46 @@ class User(UserMixin, db.Model):
     def get_unread_notifications(self):
         """
         get unread notifications grouped by day, target_type, target_id
-        :return nested list
-            inner list:
-            [(day, target_type, target, notification),...]
+        :return list
+            [day, target_type, target, notification...]
         """
         # avoid circular import
         from ..message.models import Notification
-        # get all unread notifications
-        unread = Notification.query.filter(Notification.receive_id == self.id,
-                                           Notification.unread).all()
+        # get all unview notifications
+        unview = Notification.query.filter(Notification.receive_id == self.id,
+                                           Notification.view == False).all()
         messy = []
-        for notif in unread:
+        for notif in unview:
             messy.append(
-                (notif.date_created.strftime('%Y-%m-%d'), notif.target_type, notif.target, notif))
-        messy.sort(key=lambda x:(x[0],x[1],x[2]))
+                (notif.date_created.strftime('%Y-%m-%d'), notif.action, notif.entity, notif))
+        messy.sort(key=lambda x: (x[0], x[1], x[2]))
         unread_notifications = []
-        for key, group in groupby(messy, key=lambda x:(x[0],x[1],x[2])):
-            unread_notifications.append([noti for noti in group])
+        for key, group in groupby(messy, key=lambda x: (x[0], x[1], x[2])):
+            unread_notifications.append(
+                [key[0], key[1], key[2]]+[noti[3] for noti in group])
         return unread_notifications
+
+    def get_notify_count(self):
+        from ..message.models import Notification
+        notify_count = db.session.query(func.count(Notification.id)).\
+            filter(Notification.unread == True,
+                      Notification.receive_id == self.id).\
+            group_by(func.date(Notification.date_created),
+                     Notification.action,
+                     Notification.target,
+                     Notification.target_type).count()
+        return notify_count
+
+    def action_notify_count(self, action='vote'):
+        from ..message.models import Notification
+        action_notify_count = db.session.query(func.count(Notification.id)).\
+            filter(Notification.unread == True,
+                      Notification.receive_id == self.id,
+                      Notification.action == action).\
+            group_by(func.date(Notification.date_created),
+                     Notification.target,
+                     Notification.target_type).count()
+        return action_notify_count
 
     def can(self, permissions):
         """ Check whether the user has permissions"""

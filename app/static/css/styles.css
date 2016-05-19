@@ -20,6 +20,7 @@ a:active{
 }
 ul{
     list-style:none;
+    padding-left: 0;
 }
 .fa{
     margin-right:5px;
@@ -79,6 +80,13 @@ ul{
 .dropdown:hover .dropdown-menu{
     display: block;
     margin-top: 0;
+ }
+.tab-content{
+    overflow-y: auto;
+    max-height: 200px;
+ }
+ .popover{
+    width: 315px;
  }
 /*post*/
 .post-info li {

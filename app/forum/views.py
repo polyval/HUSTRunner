@@ -6,6 +6,7 @@ from flask_login import current_user, login_required
 from .. import db
 from . import forum
 from .models import Post, Topic, Comment
+from ..message.models import Notification
 from .forms import PostForm
 
 
@@ -33,7 +34,8 @@ def new_post():
 @forum.route('/post/<slug>', methods=['GET', 'POST'])
 def view_post(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
-    comments = Comment.query.filter(Comment.post_id==post.id, Comment.parent==None).all()
+    comments = Comment.query.filter(
+        Comment.post_id == post.id, Comment.parent == None).all()
     post.views += 1
     db.session.add(post)
     return render_template('article.html', post=post, comments=comments)
@@ -43,6 +45,7 @@ def view_post(slug):
 def add_comment(slug):
     if request.method == 'POST':
         content = request.json['content']
+        # id of parent comment
         parent_id = request.json['parent_id']
         if parent_id:
             comment = Comment(content_html=content,
@@ -55,4 +58,14 @@ def add_comment(slug):
                               post=Post.query.filter_by(slug=slug).first())
         db.session.add(comment)
         db.session.commit()
-        return jsonify(comment_id = comment.id, timestamp = comment.date_created)
+        if parent_id:
+            receive_id = Comment.query.get(parent_id).author.id
+        else:
+            receive_id = Post.query.filter_by(slug=slug).first().author.id
+        notify = Notification(sender_id=current_user.id,
+                              receive_id=receive_id,
+                              target=comment.id,
+                              target_type='comment',
+                              action='comment')
+        db.session.add(notify)
+        return jsonify(comment_id=comment.id, timestamp=comment.date_created)

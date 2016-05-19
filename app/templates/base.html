@@ -30,7 +30,55 @@
                 <li><a href="{{ url_for('main.topic', topic_id=2) }}" class="top-nav-link">技术交流</a></li>
                 <li><a href="{{ url_for('main.topic', topic_id=3) }}" class="top-nav-link">赛事活动</a></li>
                 <li><a href="{{ url_for('main.topic', topic_id=4) }}" class="top-nav-link">灌水</a></li>
-                <li><a href="#"><span>消息</span>{% if current_user.is_authenticated %}{% if current_user.unread_count > 0 %}<span class="badge plain-noti">{{ current_user.unread_count }}</span>{% endif %}{% endif %}</a></li>
+                <li><a href="#" data-placement="bottom" data-toggle="popover" data-container="body" role="button" data-html="true"><span class="notify">消息</span>{% if current_user.is_authenticated %}{% if current_user.notify_count > 0 %}<span class="badge plain-noti">{{ current_user.notify_count }}</span>{% endif %}{% endif %}</a></li>
+                <div class="hide" id="popover-notify">
+                    <ul class="nav nav-pills">
+                        <li><a data-toggle="pill" href=".message-menu" class="notify-button" data-action="comment">消息</a></li>
+                        <li><a data-toggle="pill" href=".user-menu" class="notify-button" data-action="follow">关注</a></li>
+                        <li><a data-toggle="pill" href=".thumbs-up-menu" data-action="vote" class="notify-button">赞</a></li>
+                    </ul>
+                    <div class="notify-wrap tab-content">
+                        <ul class="tab-pane fade in active thumbs-up-menu">
+                        {% for notify in current_user.unread_notifications if notify[1] == 'vote' %}
+                            <li>获得{{ notify|length - 3}}赞同:
+                            {% if notify[2].slug %}
+                            <span><a href="{{ url_for('forum.view_post', slug=notify[2].slug) }}">{{ notify[2].title }}</a></span>
+                            {% elif notify[2] %}
+                            <span><a href="{{ url_for('forum.view_post', slug=notify[2].post.slug) }}#{{ notify[2].id }}comment">{{ notify[2].post.title }}</a>中的评论</span>
+                            {% endif %}
+                            来自
+                            {% for noti in notify[3:] %}
+                            <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a></span>
+                            {% endfor %}</li>
+                        {% endfor %}
+                        </ul>
+
+                        <ul class="tab-pane fade message-menu">
+                        {% for notify in current_user.unread_notifications if notify[1] == 'comment' %}
+                            <li>
+                                {% for noti in notify[3:] %}
+                                <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a></span>
+                                {% endfor %}
+                            {% if notify[2].slug %}回复了你的文章
+                            <span><a href="{{ url_for('forum.view_post', slug=notify[2].slug) }}">{{ notify[2].title }}</a></span>
+                            {% elif notify[2] %}回复了你在
+                            <span><a href="{{ url_for('forum.view_post', slug=notify[2].post.slug) }}#{{ notify[2].id }}comment">{{ notify[2].post.title }}</a>中的评论</span>
+                            {% endif %}
+                            </li>
+                        {% endfor %}
+                        </ul>
+
+                        <ul class="tab-pane fade user-menu">
+                        {% for notify in current_user.unread_notifications if notify[1] == 'follow' %}
+                            <li>
+                                {% for noti in notify[3:] %}
+                                <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a>关注了你</span>
+                                {% endfor %}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
@@ -74,11 +122,39 @@
 {{ moment.include_moment() }}
 {{ moment.lang("zh-cn") }}
 <script>
+$(function(){
+    // highlight tab
     $('a[href="' + this.location.pathname + '"]').parents('li,ul').addClass('active');
+    // hide alert automatically
     window.setTimeout(function() {
     $(".alert-warning").fadeTo(500, 0).slideUp(500, function(){
         $(this).remove();
     });
     }, 2000);
+
+    $("[data-toggle=popover]").popover({
+    html: true, 
+    delay: 100,
+    content: function() {
+          return $('#popover-notify').html();
+        }
+    });
+   
+    $('[data-toggle="popover"]').on('shown.bs.popover', function(){
+        $('.notify-button').click(function(){
+            var action = $(this).data('action');
+            var $button = $(this);
+            var post_to = '/apis/notification';
+            $.post(post_to, {action: action},
+                function(response){
+                    if(response.new_count > 0){
+                        $('.plain-noti').html(response.new_count);
+                    }else{
+                        $('.plain-noti').remove();
+                    };
+                });
+        });
+    });
+})
 </script>
 {% endblock %}

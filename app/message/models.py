@@ -58,9 +58,11 @@ class Message(db.Model):
 
 
 class Notification(db.Model):
+
     """
-    target_type: post, comment, vote, following
-    target: post_id, comment_id...
+    target_type: post, comment, user
+    action: vote，comment，follow
+    target: post_id, comment_id, user_id
     """
     __tablename__ = 'notifications'
 
@@ -70,7 +72,31 @@ class Notification(db.Model):
     receive_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     target = db.Column(db.Integer, nullable=False)
     target_type = db.Column(db.String(20), nullable=False)
+    action = db.Column(db.String(20))
     unread = db.Column(db.Boolean, default=True)
+    view = db.Column(db.Boolean, default=False)
+
+    @property
+    def entity(self):
+        return self.get_object()
+
+    @property
+    def sender(self):
+        return self.get_sender()
+
+    def get_sender(self):
+        from ..user.models import User
+        return User.query.get(self.sender_id)
+
+    def get_object(self):
+        from ..user.models import User
+        if self.target_type == 'post':
+            entity = Post.query.get(self.target)
+        elif self.target_type == 'comment':
+            entity = Comment.query.get(self.target)
+        else:
+            entity = User.query.get(self.target)
+        return entity
 
     @staticmethod
     def generate_fake(count=20):
@@ -82,40 +108,39 @@ class Notification(db.Model):
         p_count = Post.query.count()
         c_count = Comment.query.count()
         u_count = User.query.count()
-        v_count = CommentVote.query.count()
         for i in range(count):
             p_notify = Notification(date_created=forgery_py.date.date(past=True),
                                     sender_id=randint(0, u_count - 1),
                                     receive_id=1,
                                     target=randint(0, p_count - 1),
                                     target_type='post',
-                                    unread=True if randint(0, count) % 2 else False,
+                                    action='vote' if randint(
+                                        0, count) % 2 else 'comment',
+                                    unread=True if randint(
+                                        0, count) % 2 else False,
                                     )
             c_notify = Notification(date_created=forgery_py.date.date(past=True),
                                     sender_id=randint(0, u_count - 1),
                                     receive_id=1,
                                     target=randint(0, c_count - 1),
                                     target_type='comment',
-                                    unread=True if randint(0, count) % 2 else False,
+                                    action='vote' if randint(
+                                        0, count) % 2 else 'comment',
+                                    unread=True if randint(
+                                        0, count) % 2 else False,
                                     )
             u_notify = Notification(date_created=forgery_py.date.date(past=True),
                                     sender_id=randint(0, u_count - 1),
                                     receive_id=1,
                                     target=randint(0, u_count - 1),
-                                    target_type='following',
-                                    unread=True if randint(0, count) % 2 else False,
-                                    )
-            v_notify = Notification(date_created=forgery_py.date.date(past=True),
-                                    sender_id=randint(0, u_count - 1),
-                                    receive_id=1,
-                                    target=randint(0, v_count - 1),
-                                    target_type='vote',
-                                    unread=True if randint(0, count) % 2 else False,
+                                    action='follow',
+                                    target_type='user',
+                                    unread=True if randint(
+                                        0, count) % 2 else False,
                                     )
             db.session.add(p_notify)
             db.session.add(c_notify)
             db.session.add(u_notify)
-            db.session.add(v_notify)
         db.session.commit()
 
 
