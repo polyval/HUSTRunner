@@ -155,6 +155,10 @@ $(function(){
                 });
         });
     });
+
+    $('[data-toggle="tooltip"]').tooltip({
+            container: 'body' // http://stackoverflow.com/questions/18194705/display-bootstrap-popovers-outside-divs-with-overflowhidden
+        });
 })
 </script>
 {% endblock %}

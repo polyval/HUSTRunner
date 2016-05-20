@@ -3,7 +3,8 @@ import os
 import re
 import json
 
-from flask import request, render_template, make_response, current_app, abort
+from flask import request, render_template, make_response, current_app, abort, jsonify
+from .. import db
 from . import main
 from ..forum.models import Post, Topic
 from ..uploader import Uploader
@@ -31,17 +32,25 @@ def index():
 
 @main.route('/topic/<int:topic_id>', methods=['GET', 'POST'])
 def topic(topic_id):
+    if request.method == 'POST':
+        post_id = request.form.get('post_id', type=int)
+        if request.form.get('sticky') == 'False':
+            Post.query.filter_by(id=post_id).update({'sticky': True})
+        else:
+            Post.query.filter_by(id=post_id).update({'sticky': False})
+        return jsonify(msg='success')
     page = request.args.get('page', 1, type=int)
     topic_title = Topic.query.filter_by(id=topic_id).first_or_404().title
     type = request.args.get('type')
     if not type:
-        pagination = Post.query.filter_by(topic_id=topic_id).order_by(Post.date_created.desc()).paginate(
+        pagination = Post.query.filter_by(topic_id=topic_id).\
+            order_by(Post.sticky.desc(), Post.date_created.desc()).paginate(
             page=page, per_page=20, error_out=False
         )
         posts = pagination.items
     elif type == 'essence':
         Post.rank_hot(topic_id)
-        pagination = Post.query.order_by(Post.hot_index.desc()).paginate(
+        pagination = Post.query.order_by(Post.sticky.desc(), Post.hot_index.desc()).paginate(
             page=page, per_page=20, error_out=False
         )
         posts = pagination.items
@@ -118,7 +127,8 @@ def upload():
         }
         if fieldName in request.form:
             field = request.form[fieldName]
-            uploader = Uploader(field, config, current_app.static_folder, 'base64')
+            uploader = Uploader(
+                field, config, current_app.static_folder, 'base64')
             result = uploader.getFileInfo()
         else:
             result['state'] = u'上传接口出错'
@@ -141,7 +151,8 @@ def upload():
 
         _list = []
         for imgurl in source:
-            uploader = Uploader(imgurl, config, current_app.static_folder, 'remote')
+            uploader = Uploader(
+                imgurl, config, current_app.static_folder, 'remote')
             info = uploader.getFileInfo()
             _list.append({
                 'state': info['state'],
@@ -169,5 +180,6 @@ def upload():
     res = make_response(result)
     res.mimetype = mimetype
     res.headers['Access-Control-Allow-Origin'] = '*'
-    res.headers['Access-Control-Allow-Headers'] = 'X-Requested-With,X_Requested_With'
+    res.headers[
+        'Access-Control-Allow-Headers'] = 'X-Requested-With,X_Requested_With'
     return res

@@ -20,6 +20,7 @@ class Post(db.Model):
     date_modified = db.Column(db.DateTime)
     # TODO: Modify post
     views = db.Column(db.Integer, default=0)
+    sticky = db.Column(db.Boolean, default=False)
     hot_index = db.Column(db.Integer, default=0)
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
 

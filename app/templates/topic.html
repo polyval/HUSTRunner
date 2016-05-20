@@ -18,19 +18,28 @@
             </div>
         </div>
         {% for post in posts %}
-        <hr>
-        <h4><a href="{{ url_for('forum.view_post', slug=post.slug) }}">{{ post.title }}</a></h4>
-        <ul class="post-info">
-            <li>
-                <i class="fa fa-user"></i>
-                <a href="{{ url_for('user.profile', username=post.author.username) }}">{{ post.author.username }}</a>
-            </li>
-            <li><i class="fa fa-comment"></i><a>回应 {{ post.comments.count() }}</a></li>
-            <li><i class="fa fa-calendar"></i>{{ moment(post.date_created).fromNow() }}</li>
-            <li>浏览 {{ post.views }}</li>
-        </ul>
-        <div class="post-body">
-            {{ post.content_html|safe }}
+        <div class="brief">
+            <div class="header">
+                {% if current_user.is_administrator() %}
+                <span class="glyphicon glyphicon-pushpin" aria-hidden="true" style="float: right;" data-toggle="tooltip" data-placement="bottom" title={% if post.sticky %}"取消置顶"{% else %}"置顶"{% endif %} data-postID="{{ post.id }}" data-sticky="{{ post.sticky }}"></span>
+                {% endif %}
+                {% if post.sticky %}
+                <span class="label label-info">置顶</span>
+                {% endif %}
+                <a href="{{ url_for('forum.view_post', slug=post.slug) }}" class="brief-title">{{ post.title }}</a>
+            </div>
+            <ul class="post-info">
+                <li>
+                    <i class="fa fa-user"></i>
+                    <a href="{{ url_for('user.profile', username=post.author.username) }}">{{ post.author.username }}</a>
+                </li>
+                <li><i class="fa fa-comment"></i><a>回应 {{ post.comments.count() }}</a></li>
+                <li><i class="fa fa-calendar"></i>{{ moment(post.date_created).fromNow() }}</li>
+                <li>浏览 {{ post.views }}</li>
+            </ul>
+            <div class="post-body">
+                {{ post.content_html|safe|truncate(100) }}
+            </div>
         </div>
         {% endfor %}
         <div class="pagination">
@@ -44,11 +53,37 @@
                 <h3 class="panel-title">森林公园夜跑</h3>
             </div>
             <div class="panel-body panel-widget-body">
-
             </div>
-
         </div>
     </div>
 
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    $(function(){
+        $(document).on('click', '.glyphicon-pushpin', function(){
+            var sticky = $(this).attr('data-sticky');
+            var post_id = $(this).data('postid');
+            // whether sticky or not
+            if(sticky == 'False'){
+                $(this).attr('data-sticky', 'True');
+                $(this).attr('data-original-title', '取消置顶');
+                $(this).after('<span class="label label-info">置顶</span>');
+                var item = $(this).parents('.brief').detach();
+                $('#post-bar').after(item);
+                $.post('{{ request.url }}', {post_id: post_id, sticky: sticky});
+            }else{
+                $(this).attr('data-sticky', 'False');
+                $(this).attr('data-original-title', '置顶');
+                $.post('{{ request.url }}', {post_id: post_id, sticky: sticky}, function(response){
+                        location.reload()
+                    }
+                );
+            }  
+        });
+    })
+</script>
 {% endblock %}

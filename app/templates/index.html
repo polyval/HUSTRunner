@@ -18,21 +18,24 @@
             </div>
         </div>
         {% for post in posts %}
-        <hr>
-        <h4><a href="{{ url_for('forum.view_post', slug=post.slug) }}">{{ post.title }}</a></h4>
-        <ul class="post-info" style="padding:0">
-            <li>
-                <i class="fa fa-user"></i>
-                <a href="{{ url_for('user.profile', username=post.author.username) }}">{{ post.author.username }}</a>
-            </li>
-            <li><i class="fa fa-comment"></i>回应 {{ post.comments.count() }}</li>
-            <li><i class="fa fa-calendar"></i>{{ moment(post.date_created).fromNow() }}</li>
-            <li>浏览 {{ post.views }}</li>
-        </ul>
-        <div class="post-body">
-            {{ post.content_html|safe|truncate(100) }}
+        <div class="brief">
+            <div>
+            <h4><a href="{{ url_for('forum.view_post', slug=post.slug) }}">{{ post.title }}</a></h4>
+            </div>
+            <ul class="post-info" style="padding:0">
+                <li>
+                    <i class="fa fa-user"></i>
+                    <a href="{{ url_for('user.profile', username=post.author.username) }}">{{ post.author.username }}</a>
+                </li>
+                <li><i class="fa fa-comment"></i>回应 {{ post.comments.count() }}</li>
+                <li><i class="fa fa-calendar"></i>{{ moment(post.date_created).fromNow() }}</li>
+                <li>浏览 {{ post.views }}</li>
+            </ul>
+            <div class="post-body">
+                {{ post.content_html|safe|truncate(100) }}
+            </div>
         </div>
-        {% endfor %}
+            {% endfor %}
         {% if pagination.has_prev or pagination.has_next %}
         <div class="pagination">
             {{ macros.pagination_widget(pagination, '.index') }}
