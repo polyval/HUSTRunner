@@ -37,7 +37,7 @@
         {% for comment in comments recursive %}
         <li class="comment-item clear-fix" id="{{ comment.id }}parent">
             <div class="user-face">
-                <a href="#"><img class="pil" src="{{ comment.author.avatar }}"></a>
+                <a href="{{ url_for('user.profile', username=comment.author.username) }}"><img class="pil" src="{{ comment.author.avatar }}"></a>
             </div>
             <div class="comment-content" id="{{ comment.id }}comment">
                 <div class="bg-img-green">

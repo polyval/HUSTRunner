@@ -44,15 +44,65 @@
     </div>
     <!--right-->
     <div class="col-md-4">
+        {% for activity in activities %}
         <div class="panel panel-default panel-widget">
             <div class="panel-heading panel-widget-heading">
-                <h3 class="panel-title">森林公园夜跑</h3>
+                <span class="panel-title">{{ activity.title }}</span>
             </div>
             <div class="panel-body panel-widget-body">
-                <p>晚上9点半，韵苑路口集合</p>
+                <div class="info">
+                    <span class="initiator">发起者:<a href="#" data-toggle="tooltip" data-placement="top" title="{{ activity.initiator.username }}"><img class="pil" src="{{ activity.initiator.avatar }}"></a></span>
+                    <span>{{ moment(activity.date_created).fromNow() }}</span>
+                </div>
+                <div class="activity-content" style="clear: both;">
+                <p>{{ activity.brief }}</p>
+                </div>
+                <div class="count">已参加<span>{{ activity.participants.all()|count }}</span>人</div>
+                <div class="user-wrap">
+                    {% for participant in activity.participants.all() %}  
+                    <div class="user-face" data-user="{{ participant.id }}">
+                        <a href="#" data-toggle="tooltip" data-placement="top" title="{{ participant.username }}"><img class="pil" src="{{ participant.avatar }}"></a>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div style="clear: both; float: right;"><button class="btn btn-default btn-sm join" data-activityID="{{ activity.id }}">{% if current_user.has_join(activity) %}取消参加{% else %}参加{% endif %}</button></div>
             </div>
 
         </div>
+        {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    $(function(){
+        $('.join').on('click', function(){
+            var post_to = '{{ url_for('activity.activity') }}';
+            var action = $(this).html();
+            var activity_id = $(this).data('activityid');
+            if(action == '参加'){
+                $(this).html('取消参加');
+                action = 'join'
+            }else{
+                $(this).html('参加');
+                action = 'quit'
+            };
+
+            $.post(post_to, {action: action, activity_id: activity_id }, 
+                function(){
+                    if(action == 'join'){
+                        html = '<div class="user-face" data-user="{{ current_user.id }}"><a href="#" data-toggle="tooltip" data-placement="top" title="{{ current_user.username }}"><img class="pil" src="{{ current_user.avatar }}"></a></div>'
+                        $('.user-wrap').append(html);
+                        $('.count span').html(parseInt($('.count span').html()) + 1);
+                    }else{
+                        $('.user-face[data-user={{ current_user.id }}]').remove();
+                        $('.count span').html($('.count span').html() - 1);
+                    }
+                }
+            );            
+        });
+    })
+</script>
 {% endblock %}

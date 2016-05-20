@@ -9,6 +9,7 @@ from flask_login import UserMixin, AnonymousUserMixin
 from sqlalchemy import func, and_
 
 from app import db
+from ..activity.models import Activity
 from .. import login_manager
 
 
@@ -134,6 +135,11 @@ class User(UserMixin, db.Model):
                                 backref=db.backref('followed', lazy='joined'),
                                 lazy='dynamic',
                                 cascade='all, delete-orphan')
+
+    initiate_activities = db.relationship('Activity',
+                                          foreign_keys=[Activity.initiator_id],
+                                          backref='initiator',
+                                          lazy='dynamic')
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -301,6 +307,10 @@ class User(UserMixin, db.Model):
                      Notification.target,
                      Notification.target_type).count()
         return action_notify_count
+
+    def has_join(self, activity):
+        return True if User.query.filter(User.activities.contains(activity),
+                                         User.id == self.id).first() else False
 
     def can(self, permissions):
         """ Check whether the user has permissions"""

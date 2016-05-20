@@ -46,5 +46,8 @@ def create_app(config_name):
     from .apis import api as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix= '/apis')
 
+    from .activity import activity as activity_blueprint
+    app.register_blueprint(activity_blueprint)
+
     return app
 

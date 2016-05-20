@@ -111,6 +111,44 @@ ul{
 h4 a:visited{
     color:#669;
 }
+.info{
+    font-size: 12px;
+    color:#072;
+    overflow: hidden;
+}
+.info span{
+    line-height: 28px;
+}
+.info span+span{
+    float: right;
+}
+.initiator{
+    float: left;
+}
+.activity-content{
+    margin-top: 10px;
+}
+.initiator a{
+    margin-left: 5px;
+}
+.user-wrap{
+    border: 1px solid #eee; 
+}
+.user-wrap .user-face{
+    margin-top: 5px;
+}
+.btn:focus{
+    outline: none;
+}
+.count{
+    font-size: 12px;
+    color: #999;
+    margin-top: 20px;
+}
+.count span{
+    color: #072;
+    font-weight:700;
+}
 /*article*/
 .article{
 	max-width: 800px;
@@ -177,7 +215,7 @@ h4 a:visited{
 	height: 25px;
 	margin-right: 5px;
 }
-.user-face a img {
+.pil {
     top:5px;
 	width: 25px;
 	height: 25px;

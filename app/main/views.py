@@ -7,6 +7,7 @@ from flask import request, render_template, make_response, current_app, abort, j
 from .. import db
 from . import main
 from ..forum.models import Post, Topic
+from ..activity.models import Activity
 from ..uploader import Uploader
 
 
@@ -27,7 +28,10 @@ def index():
         posts = pagination.items
     else:
         abort(404)
-    return render_template('index.html', posts=posts, pagination=pagination)
+    # get the activities
+    activities = Activity.query.filter_by(expired=False).limit(5).all()
+    return render_template('index.html', posts=posts,
+                           pagination=pagination, activities=activities)
 
 
 @main.route('/topic/<int:topic_id>', methods=['GET', 'POST'])
