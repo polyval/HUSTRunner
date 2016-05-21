@@ -10,6 +10,7 @@
         <div id="post-bar">
             <div style="float:right">
                 <a href="{{ url_for('forum.new_post') }}">发帖</a>
+                <a href="{{ url_for('activity.new_activity') }}">发起活动</a>
             </div>
             <div class="topic-tab">
                 <a href="/">最近话题</a>
@@ -52,7 +53,7 @@
             <div class="panel-body panel-widget-body">
                 <div class="info">
                     <span class="initiator">发起者:<a href="#" data-toggle="tooltip" data-placement="top" title="{{ activity.initiator.username }}"><img class="pil" src="{{ activity.initiator.avatar }}"></a></span>
-                    <span>{{ moment(activity.date_created).fromNow() }}</span>
+                    <span class="expired-time" data-created="{{ activity.date_created }}" data-expired="{{ activity.date_expired }}"></span>
                 </div>
                 <div class="activity-content" style="clear: both;">
                 <p>{{ activity.brief }}</p>
@@ -65,7 +66,9 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% if current_user.is_authenticated %}
                 <div style="clear: both; float: right;"><button class="btn btn-default btn-sm join" data-activityID="{{ activity.id }}">{% if current_user.has_join(activity) %}取消参加{% else %}参加{% endif %}</button></div>
+                {% endif %}
             </div>
 
         </div>
@@ -78,9 +81,18 @@
 {{ super() }}
 <script type="text/javascript">
     $(function(){
+
+        $('.expired-time').each(function(i, e){
+            var date_created = moment($(e).data('created'));
+            var now = moment();
+            var date_expired = moment($(e).data('expired'));
+            $(e).html(now.to(date_expired) + '到期');
+        });
+        
         $('.join').on('click', function(){
-            var post_to = '{{ url_for('activity.activity') }}';
+            var post_to = '{{ url_for('activity.join_activity') }}';
             var action = $(this).html();
+            var $button = $(this);
             var activity_id = $(this).data('activityid');
             if(action == '参加'){
                 $(this).html('取消参加');
@@ -94,11 +106,13 @@
                 function(){
                     if(action == 'join'){
                         html = '<div class="user-face" data-user="{{ current_user.id }}"><a href="#" data-toggle="tooltip" data-placement="top" title="{{ current_user.username }}"><img class="pil" src="{{ current_user.avatar }}"></a></div>'
-                        $('.user-wrap').append(html);
-                        $('.count span').html(parseInt($('.count span').html()) + 1);
+                        $button.parent().prev('.user-wrap').append(html);
+                        $count = $button.parent().prev().prev('.count').children('span');
+                        $count.html(parseInt($count.html()) + 1);
                     }else{
-                        $('.user-face[data-user={{ current_user.id }}]').remove();
-                        $('.count span').html($('.count span').html() - 1);
+                        $button.parent().prev('.user-wrap').children('.user-face[data-user={{ current_user.id }}]').remove();
+                        $count = $button.parent().prev().prev('.count').children('span');
+                        $count.html(parseInt($count.html()) - 1);
                     }
                 }
             );            

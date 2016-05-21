@@ -20,8 +20,10 @@
         {% for post in posts %}
         <div class="brief">
             <div class="header">
+                {% if current_user.is_authenticated %}
                 {% if current_user.is_administrator() %}
                 <span class="glyphicon glyphicon-pushpin" aria-hidden="true" style="float: right;" data-toggle="tooltip" data-placement="bottom" title={% if post.sticky %}"取消置顶"{% else %}"置顶"{% endif %} data-postID="{{ post.id }}" data-sticky="{{ post.sticky }}"></span>
+                {% endif %}
                 {% endif %}
                 {% if post.sticky %}
                 <span class="label label-info">置顶</span>

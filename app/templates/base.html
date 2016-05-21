@@ -30,7 +30,9 @@
                 <li><a href="{{ url_for('main.topic', topic_id=2) }}" class="top-nav-link">技术交流</a></li>
                 <li><a href="{{ url_for('main.topic', topic_id=3) }}" class="top-nav-link">赛事活动</a></li>
                 <li><a href="{{ url_for('main.topic', topic_id=4) }}" class="top-nav-link">灌水</a></li>
-                <li><a href="javascript:void(0)" data-placement="bottom" data-toggle="popover" data-container="body" role="button" data-html="true"><span class="notify">消息</span>{% if current_user.is_authenticated %}{% if current_user.notify_count > 0 %}<span class="badge plain-noti">{{ current_user.notify_count }}</span>{% endif %}{% endif %}</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="javascript:void(0)" data-placement="bottom" data-toggle="popover" data-container="body" role="button" data-html="true"><span class="notify">消息</span>{% if current_user.notify_count > 0 %}<span class="badge plain-noti">{{ current_user.notify_count }}</span>{% endif %}</a></li>
+                {% endif %}
                 <div class="hide" id="popover-notify">
                     <ul class="nav nav-pills">
                         <li><a data-toggle="pill" href=".message-menu" class="notify-button" data-action="comment">消息</a></li>

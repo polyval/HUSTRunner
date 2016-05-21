@@ -32,3 +32,10 @@ class Activity(db.Model):
         now = datetime.now()
         self.date_expired = datetime(now.year, now.month, now.day + 1)
 
+    def set_expired(self, day=1):
+        self.date_expired = datetime(self.date_created.year,
+                                     self.date_created.month,
+                                     self.date_created.day + day)
+        db.session.add(self)
+        db.session.commit()
+

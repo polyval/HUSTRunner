@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}发起活动-HUSTRunner{% endblock %}
+
+{% block page_content %}
+<div style="margin: auto; width: 20%;height: 50%;overflow: auto;top: 0; left: 0; bottom: 0; right: 0;position: absolute;
+">
+    <form action="{{ url_for('activity.new_activity') }}" method="post">
+        {{ form.hidden_tag() }}
+        {{ wtf.form_errors(form, hiddens="only") }}
+        {{ wtf.form_field(form.title) }}
+        {{ wtf.form_field(form.brief) }}
+        {% if current_user.is_administrator() %}
+        {{ wtf.form_field(form.date_expired, placeholder="输入到期天数") }}
+        {% else %}
+        {{ wtf.form_field(form.date_expired, readonly=True, placeholder="今晚12点",title="没有权限，请联系管理员或站长帮忙修改", **{'data-toggle':'tooltip','data-placement':'top'}) }}
+        {% endif %}
+        {{ wtf.form_field(form.submit) }}
+    </form>
+</div>
+{% endblock %}
