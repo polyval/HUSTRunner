@@ -5,6 +5,7 @@ from app.user.models import User, Role, Follow
 from app.forum.models import Post, Topic, Comment
 from app.message.models import Notification
 from app.activity.models import Activity
+from app.main.models import ImgFace, Tag
 
 app = create_app('testing')
 manager = Manager(app)
@@ -22,7 +23,8 @@ def make_shell_context():
                 Role=Role, Post=Post,
                 Topic=Topic, Comment=Comment,
                 notify=Notification,
-                Activity=Activity)
+                Activity=Activity,
+                Img=ImgFace, Tag=Tag)
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 

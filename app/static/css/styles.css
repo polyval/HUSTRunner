@@ -6,6 +6,14 @@ a:link{
 	color:#37a;
 }
 
+img{
+max-width: 600px;
+max-height: 600px;
+}
+.face{
+    position: absolute;
+    border: 2px solid white;
+}
 /*a:hover{
 	color:#fff;
 	text-decoration:none;

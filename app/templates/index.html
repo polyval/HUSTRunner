@@ -56,7 +56,7 @@
                     <span class="expired-time" data-created="{{ activity.date_created }}" data-expired="{{ activity.date_expired }}"></span>
                 </div>
                 <div class="activity-content" style="clear: both;">
-                <p>{{ activity.brief }}</p>
+                <span style="white-space: pre-wrap;">{{ activity.brief }}</span>
                 </div>
                 <div class="count">已参加<span>{{ activity.participants.all()|count }}</span>人</div>
                 <div class="user-wrap">

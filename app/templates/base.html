@@ -123,6 +123,8 @@
 {{ super() }}
 {{ moment.include_moment() }}
 {{ moment.lang("zh-cn") }}
+<script src="{{ url_for('static', filename='js/jquery.facedetection.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 <script>
 $(function(){
     // highlight tab

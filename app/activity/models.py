@@ -19,7 +19,7 @@ class Activity(db.Model):
     # expired can be decided by date_expired, here we add it in database because
     # we wish we can set the activity to expired manually.
     expired = db.Column(db.Boolean, default=False)
-    initiator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    initiator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     # user.activities.all(), activity.participant.all()
     # activity.participant.append(user), db.session.add(activity) to add user
     participants = db.relationship('User',
