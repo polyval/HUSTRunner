@@ -52,6 +52,7 @@ def toggle_follow():
 @permission_required(Permission.MODERATE_COMMENTS)
 def delete_comment(id):
     Comment.query.filter_by(id=id).delete()
+    Comment.query.filter_by(parent_id=id).delete()
     return jsonify(delete=id)
 
 

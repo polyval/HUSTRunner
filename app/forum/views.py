@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 
 from .. import db
 from . import forum
-from .models import Post, Topic, Comment
+from .models import Post, Topic, Comment, CommentVote
 from ..message.models import Notification
 from .forms import PostForm
 
@@ -33,6 +33,14 @@ def new_post():
 
 @forum.route('/post/<slug>', methods=['GET', 'POST'])
 def view_post(slug):
+    # TODO: delete comments together
+    if request.method == 'POST':
+        # Post.query.filter_by(slug=slug).delete() may not
+        # delete its comments. See stackoverflow:
+        # questions/5033547/sqlachemy-cascade-delete#answer-12801654
+        p = Post.query.filter_by(slug=slug).first()
+        db.session.delete(p)
+        return redirect(url_for('main.index'))
     post = Post.query.filter_by(slug=slug).first_or_404()
     comments = Comment.query.filter(
         Comment.post_id == post.id, Comment.parent == None).all()

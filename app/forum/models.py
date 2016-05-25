@@ -22,7 +22,8 @@ class Post(db.Model):
     views = db.Column(db.Integer, default=0)
     sticky = db.Column(db.Boolean, default=False)
     hot_index = db.Column(db.Integer, default=0)
-    comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    comments = db.relationship(
+        'Comment', backref='post', lazy='dynamic', cascade='all, delete-orphan')
 
     @staticmethod
     def generate_fake(count=50):
