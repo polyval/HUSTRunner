@@ -6,7 +6,6 @@ from ..forum.models import Comment
 from ..user.models import User, Permission
 from ..message.models import Notification
 from ..main.models import ImgFace, Tag
-from ..decorators import permission_required
 
 
 @api.route('/comments/vote', methods=['POST'])
@@ -49,10 +48,12 @@ def toggle_follow():
 
 
 @api.route('/comments/<int:id>', methods=['DELETE'])
-@permission_required(Permission.MODERATE_COMMENTS)
+@login_required
 def delete_comment(id):
-    Comment.query.filter_by(id=id).delete()
-    Comment.query.filter_by(parent_id=id).delete()
+    c = Comment.query.filter_by(id=id).first()
+    if c.author == current_user or current_user.role.name != 'User':
+        Comment.query.filter_by(id=id).delete()
+        Comment.query.filter_by(parent_id=id).delete()
     return jsonify(delete=id)
 
 

@@ -10,24 +10,39 @@ from ..message.models import Notification
 from .forms import PostForm
 
 
+@forum.route('/edit/<slug>', methods=['GET', 'POST'])
 @forum.route('/new_post', methods=['GET', 'POST'])
 @login_required
-def new_post():
+def new_post(slug=None):
     form = PostForm()
-    if form.validate_on_submit():
-        content = request.form['editorValue']
-        topic = Topic.query.filter_by(title=form.topic.data).first()
-        author = current_user._get_current_object()
-        title = form.title.data
-        post = Post(content_html=content,
-                    topic=topic,
-                    author=author,
-                    title=title)
-        post.slug = post.slugify()
-        db.session.add(post)
-        db.session.commit()
-        flash(u'文章已发布')
-        return redirect(url_for('main.index'))
+    if slug:
+        post = Post.query.filter_by(slug=slug).first()
+        if form.validate_on_submit():
+            post.content_html = request.form['editorValue']
+            post.topic = Topic.query.filter_by(title=form.topic.data).first()
+            post.title = form.title.data
+            db.session.add(post)
+            flash(u'文章已修改')
+            return redirect(url_for('main.index'))
+        form.title.default = post.title
+        form.topic.default = post.topic
+        form.process()
+        return render_template('new_post.html', form=form, post=post)
+    else:
+        if form.validate_on_submit():
+            content = request.form['editorValue']
+            topic = Topic.query.filter_by(title=form.topic.data).first()
+            author = current_user._get_current_object()
+            title = form.title.data
+            post = Post(content_html=content,
+                        topic=topic,
+                        author=author,
+                        title=title)
+            post.slug = post.slugify()
+            db.session.add(post)
+            db.session.commit()
+            flash(u'文章已发布')
+            return redirect(url_for('main.index'))
     return render_template('new_post.html', form=form)
 
 

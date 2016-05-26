@@ -11,7 +11,11 @@
 
 {% block page_content %}
 <div class="new-post">
-    <form action="{{ url_for('forum.new_post') }}" method="post">
+    <form action="{% if post %}
+    {{ url_for('forum.new_post', slug=post.slug) }}
+    {% else %}
+    {{ url_for('forum.new_post') }}
+    {% endif %}" method="post">
         {{ form.hidden_tag() }}
         {{ wtf.form_errors(form, hiddens="only") }}
 
@@ -36,6 +40,12 @@
             ['undo', 'redo'],
             ['bold', 'italic', 'underline', 'simpleupload', 'strikethrough', 'emotion', 'superscript', 'subscript', 'formatmatch', 'autotypeset', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'cleardoc']
         ]
+    });
+    ue.addListener("ready", function () {
+        // set content after editor is ready
+        {% if post %}
+        ue.setContent('{{ post.content_html|safe }}');
+        {% endif %}
     });
 </script>
 {% endblock %}
