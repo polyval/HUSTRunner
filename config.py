@@ -24,13 +24,13 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    DEBUG = True
     SQLALCHEMY_DATABASE_URI = \
         'mysql+pymysql://root:password@localhost/hustrunner'
 
 
 class TestingConfig(Config):
     TESTING = True
+    DEBUG = True
     if platform.system() == 'Windows':
         SQLALCHEMY_DATABASE_URI = \
             'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')

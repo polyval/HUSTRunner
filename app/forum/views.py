@@ -33,7 +33,6 @@ def new_post():
 
 @forum.route('/post/<slug>', methods=['GET', 'POST'])
 def view_post(slug):
-    # TODO: delete comments together
     if request.method == 'POST':
         # Post.query.filter_by(slug=slug).delete() may not
         # delete its comments. See stackoverflow:

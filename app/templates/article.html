@@ -276,7 +276,11 @@
                     }
                 },
             });
-        })
+        });
+        // delete post
+        $('.delete-post').click(function(){
+            $.post('{{ request.path }}');
+        });
     });
 </script>
 {% endblock %}

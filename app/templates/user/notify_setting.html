@@ -1,0 +1,33 @@
+{% extends "_settings.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}消息设置-HUSTRunner{% endblock %}
+
+{% block page_content %}
+{{ super() }}
+<div class="col-md-4 settings-sections">
+    {{ form.hidden_tag() }}
+    {{ wtf.form_errors(form, hiddens="only") }}
+    {{ form.pm_all.label }}
+    {{ wtf.form_field(form.pm_all) }}
+    {{ form.be_followed.label }}
+    {{ wtf.form_field(form.be_followed) }}
+    {{ form.post_be_voted.label }}
+    {{ wtf.form_field(form.post_be_voted) }}
+    {{ form.comment_be_voted.label }}
+    {{ wtf.form_field(form.comment_be_voted) }}
+    {{ form.comment.label }}
+    {{ wtf.form_field(form.comment) }}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    $('.radio input').on('change', function(){
+        var radioname = $(this).attr('name');
+        var value = $('input[name=' + radioname + ']:checked').val()
+        $.post('{{ url_for('user.notification') }}', {field: radioname, value: value});
+    });
+</script>
+{% endblock %}

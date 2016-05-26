@@ -145,10 +145,10 @@ class Notification(db.Model):
 
 
 class NotifyConfig(db.Model):
-    __tablename__ = 'notifysettings'
+    __tablename__ = "notifysettings"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, unique=True)
     # receive personal message from any user
     pm_all = db.Column(db.Boolean, default=True)
     be_followed = db.Column(db.Boolean, default=True)

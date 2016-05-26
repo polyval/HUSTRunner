@@ -93,7 +93,7 @@ class UserModelTestCase(unittest.TestCase):
         db.session.commit()
         self.assertTrue(u1.followed.count() == 0)
         self.assertTrue(u2.followers.count() == 0)
-        self.assertTrue(Follow.query.count() == 1)
+        self.assertTrue(Follow.query.count() == 0)
         u2.follow(u1)
         db.session.add(u1)
         db.session.add(u2)

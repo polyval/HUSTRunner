@@ -33,10 +33,10 @@
                 <li>浏览 {{ post.views }}</li>
             </ul>
             <div class="post-body">
-                {{ post.content_html|safe|truncate(100) }}
+                {{ post.content_html[3:-4]|striptags|truncate(100) }}
             </div>
         </div>
-            {% endfor %}
+        {% endfor %}
         {% if pagination.has_prev or pagination.has_next %}
         <div class="pagination">
             {{ macros.pagination_widget(pagination, '.index') }}
@@ -70,7 +70,6 @@
                 <div style="clear: both; float: right;"><button class="btn btn-default btn-sm join" data-activityID="{{ activity.id }}">{% if current_user.has_join(activity) %}取消参加{% else %}参加{% endif %}</button></div>
                 {% endif %}
             </div>
-
         </div>
         {% endfor %}
     </div>

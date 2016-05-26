@@ -141,6 +141,10 @@ class User(UserMixin, db.Model):
                                           backref='initiator',
                                           lazy='dynamic')
 
+    notify_settings = db.relationship("NotifyConfig",
+                                      backref=db.backref('user', uselist=False),
+                                      lazy='dynamic')
+
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:

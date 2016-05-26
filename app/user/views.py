@@ -3,15 +3,16 @@ from datetime import datetime
 import uuid
 import imghdr
 import os
+import ast
 
-from sqlalchemy import or_
 from flask import request, redirect, url_for, render_template, flash, current_app, jsonify
 from flask_login import current_user, login_required
 
 from . import user
-from .forms import EditProfileForm, EditProfileAdiminForm
+from .forms import EditProfileForm, EditProfileAdiminForm, NotifyForm
 from .models import User, Role, Follow
 from ..forum.models import Post, Comment
+from ..message.models import NotifyConfig
 from .. import db
 from ..decorators import admin_required
 
@@ -24,8 +25,6 @@ def profile(username):
     activities = posts + comments
     activities = sorted(
         activities, key=lambda activity: activity.date_created, reverse=True)
-    # activities = Post.query.join(Comment).filter(or_(Post.author_id == user.id,
-    # Comment.author_id == user.id)).order_by('date_created').all()
     return render_template('user/profile.html', user=user, activities=activities)
 
 
@@ -157,5 +156,22 @@ def account():
 @user.route('/settings/notification', methods=['GET', 'POST'])
 @login_required
 def notification():
-    # TODO
-    return render_template('user/notify_setting.html')
+    if not current_user.notify_settings.first():
+            s = NotifyConfig(user_id=current_user.id)
+            db.session.add(s)
+            db.session.commit()
+    if request.method == 'POST':
+        field = request.form.get('field')
+        value = request.form.get('value')
+        # questions/21732123/convert-true-false-value-read-from-file-to-boolean#answer-21732186
+        setattr(current_user.notify_settings.first(), field, ast.literal_eval(value))
+        db.session.add(current_user)
+        db.session.commit()
+        return jsonify(field=field, value=value)
+    form = NotifyForm()
+    for field in form:
+        # set default value for radio field
+        if field.name != 'csrf_token':
+            setattr(field, 'default', getattr(current_user.notify_settings.first(), field.name))
+    form.process() # /questions/31423495/how-to-dynamically-set-default-value-in-wtforms-radiofield
+    return render_template('user/notify_setting.html', form=form)

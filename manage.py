@@ -3,7 +3,7 @@ from flask_migrate import Migrate, MigrateCommand
 from app import create_app, db
 from app.user.models import User, Role, Follow
 from app.forum.models import Post, Topic, Comment
-from app.message.models import Notification
+from app.message.models import Notification, NotifyConfig
 from app.activity.models import Activity
 from app.main.models import ImgFace, Tag
 
@@ -23,6 +23,7 @@ def make_shell_context():
                 Role=Role, Post=Post,
                 Topic=Topic, Comment=Comment,
                 notify=Notification,
+                NotifyConfig = NotifyConfig,
                 Activity=Activity,
                 Img=ImgFace, Tag=Tag)
 manager.add_command("shell", Shell(make_context=make_shell_context))
