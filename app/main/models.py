@@ -12,7 +12,7 @@ class ImgFace(db.Model):
     __tablename__ = "img_faces"
 
     id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String, nullable=False)
+    url = db.Column(db.String(300), nullable=False)
     tags = db.relationship('Tag',
                            secondary=tag_img,
                            backref=db.backref('imgs', lazy='dynamic'),

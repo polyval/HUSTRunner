@@ -117,7 +117,8 @@ class User(UserMixin, db.Model):
     avatar = db.Column(db.String(200), default='/static/avatar/profile.jpg')
     signature = db.Column(db.String(100))
     about_me = db.Column(db.Text)
-    # TODO: label marathon, half marathon
+    # TODO: label marathon, half marathon, for future
+    # title = db.Column(db.String(50))
     # one to many, add author attribute to Post, this attribute refers to User
     # Object
     posts = db.relationship("Post", backref="author", lazy="dynamic")

@@ -18,7 +18,6 @@ class Post(db.Model):
     date_created = db.Column(
         db.DateTime, index=True, default=datetime.utcnow())
     date_modified = db.Column(db.DateTime)
-    # TODO: Modify post
     views = db.Column(db.Integer, default=0)
     sticky = db.Column(db.Boolean, default=False)
     hot_index = db.Column(db.Integer, default=0)

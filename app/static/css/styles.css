@@ -335,6 +335,11 @@ h4 a:visited{
 .top{
 	margin-bottom: 10px;
 }
+/*TODO：future release*/
+/*.top span{
+    vertical-align: middle;
+    margin-right: 10px;
+}*/
 .name{
 	font-weight: 700;
 	color: #222;
@@ -365,6 +370,7 @@ h4 a:visited{
 .description{
     padding-top: 12px;
     border-top: 1px dotted #eee;
+    word-wrap: break-word;
 }
 .short-info span+span{
 	margin-left: 6px;

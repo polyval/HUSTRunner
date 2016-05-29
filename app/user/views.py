@@ -147,6 +147,13 @@ def comments(username):
     return render_template('user/comments.html', user=user, comments=comments)
 
 
+@user.route('/user/<username>/activities')
+def activities(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    activities = user.activities.all()
+    return render_template('user/activities.html', user=user, activities=activities)
+
+
 @user.route('/settings/account', methods=['GET', 'POST'])
 @login_required
 def account():

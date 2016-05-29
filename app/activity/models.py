@@ -1,5 +1,6 @@
 from datetime import datetime
 from .. import db
+from sqlalchemy.ext.hybrid import hybrid_property
 
 participate = db.Table('participate',
                        db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
@@ -18,7 +19,6 @@ class Activity(db.Model):
     date_expired = db.Column(db.DateTime)
     # expired can be decided by date_expired, here we add it in database because
     # we wish we can set the activity to expired manually.
-    expired = db.Column(db.Boolean, default=False)
     initiator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     # user.activities.all(), activity.participant.all()
     # activity.participant.append(user), db.session.add(activity) to add user
@@ -38,4 +38,15 @@ class Activity(db.Model):
                                      self.date_created.day + day)
         db.session.add(self)
         db.session.commit()
+
+    @hybrid_property
+    def expired(self):
+        # TypeError("Boolean value of this clause is not defined")
+        # will be raised if the next line is rewritten as
+        # "if datetime.now() > self.date_expired:"
+        if (datetime.now() > self.date_expired) is True:
+            return True
+        else:
+            return False
+
 

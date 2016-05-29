@@ -8,6 +8,9 @@
         <div class="profile-main">
             <div class="top">
                 <span class="name">{{ user.username }}</span>
+                <!--{% if user.title %}-->
+                <!--<span class="label label-info">{{ user.title }}</span>-->
+                <!--{% endif %}-->
             </div>
             <div class="avatar-editor col-md-2">
                 <form id="avatar_form" action="/avatar" enctype="multipart/form-data" style="display:none;" method="POST" target="avatar_iframe">
@@ -19,7 +22,13 @@
             <div class="user-describe">
                 <div class="short-info">
                 {% if user.school %}{<span>{ user.school }}</span>{% endif %}
-                {% if user.gender %}<span>{{ user.gender }}</span>{% endif %}
+                {% if user.gender %}
+                    {% if user.gender == '男' %}
+                    <i class="fa fa-mars" aria-hidden="true"></i>
+                    {% else %}
+                    <i class="fa fa-venus" aria-hidden="true"></i>
+                    {% endif %}
+                {% endif %}
                 {% if user.signature %}<span>{{ user.signature }}</span>{% endif %}
                 </div>
                 <div class="description">
@@ -31,7 +40,7 @@
             <li><a href="{{ url_for('user.profile', username=user.username) }}"><i class="fa fa-home"></i></a></li>
             <li><a href="{{ url_for('user.posts', username=user.username) }}">文章</a></li>
             <li><a href="{{ url_for('user.comments', username=user.username) }}">回复</a></li>
-            <li><a href="#">活动</a></li>
+            <li><a href="{{ url_for('user.activities', username=user.username) }}">活动</a></li>
         </ul>
     </div>    
     {% block left_bottom %}{% endblock %}
