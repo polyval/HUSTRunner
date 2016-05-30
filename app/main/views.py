@@ -30,6 +30,7 @@ def index():
         abort(404)
     # get the activities
     activities = Activity.query.filter_by(expired=False).limit(5).all()
+    print activities
     return render_template('index.html', posts=posts,
                            pagination=pagination, activities=activities)
 

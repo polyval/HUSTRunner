@@ -44,9 +44,7 @@ class Activity(db.Model):
         # TypeError("Boolean value of this clause is not defined")
         # will be raised if the next line is rewritten as
         # "if datetime.now() > self.date_expired:"
-        if (datetime.now() > self.date_expired) is True:
-            return True
-        else:
-            return False
+        # should return SQL expression object applicable to the WHERE clause
+        return datetime.now() > self.date_expired
 
 
