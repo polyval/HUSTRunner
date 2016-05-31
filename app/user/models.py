@@ -201,6 +201,15 @@ class User(UserMixin, db.Model):
         return self.action_notify_count(action='follow')
 
     @property
+    def unread_message_count(self):
+        """
+        Get the count of unread personal messages,
+        multiple messages from one person merges as one.
+        """
+        from ..message.models import Conversation
+        return Conversation.query.filter_by(user_id=self.id, unread=True).count()
+
+    @property
     def unread_notifications(self):
         return self.get_unread_notifications()
 

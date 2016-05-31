@@ -22,7 +22,8 @@ def inbox():
                                                      Conversation.to_user_id == to_user.id,
                                                      ).first() or Conversation(user_id=current_user.id,
                                                                                from_user_id=current_user.id,
-                                                                               to_user_id=to_user.id)
+                                                                               to_user_id=to_user.id,
+                                                                               unread=False)
             # save conversation in other end
             end_conversation = Conversation.query.filter(Conversation.user_id == to_user.id,
                                                          Conversation.to_user_id == current_user.id,
@@ -59,6 +60,8 @@ def inbox():
     conversations = pagination.items
     message_count = Conversation.query.filter_by(
         user_id=current_user.id).count()
+    # read messages
+    Conversation.query.filter_by(user_id=current_user.id).update({Conversation.unread: False})
 
     return render_template("inbox.html", conversations=conversations,
                            message_count=message_count, pagination=pagination)
@@ -71,7 +74,6 @@ def view_conversation(conversation_id):
         id=conversation_id,
         user_id=current_user.id).first_or_404()
     to_user = conversation.to_user
-
     if request.method == 'POST':
         # delete message
         if request.form.get('message_id'):
