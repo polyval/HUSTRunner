@@ -1,4 +1,5 @@
 $(function(){
+    // face detection
     $('img:not([class])').mouseenter(function(){
         // avoid conflict
         var $this = $(this);
@@ -64,7 +65,6 @@ $(function(){
                                 '</div>'
                     $thisface.parent().before(html);
                 };
-
                 if($thisface.attr('title')){
                     //if then show alert
                     alert('tag added already');
@@ -94,5 +94,25 @@ $(function(){
                         });
                     });
               };
+    });
+
+    // toggle follow
+    $('.toggle-follow').on('click', function(){
+        var $btn = $(this)
+        var user_id = $btn.attr('data-id');
+        var flag = $btn.hasClass('btn-unfollow');
+        var post_to = '/apis/follow'
+
+        if (flag){
+                $btn.removeClass('btn-unfollow');
+                $btn.addClass('btn-follow');
+                $btn.html('关注');
+            } else{
+                $btn.removeClass('btn-follow');
+                $btn.addClass('btn-unfollow');
+                $btn.html('取消关注');
+            };
+
+        $.post(post_to, {user_id: user_id, unfollow: flag});
     });
 });

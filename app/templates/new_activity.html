@@ -5,8 +5,7 @@
 {% block title %}发起活动-HUSTRunner{% endblock %}
 
 {% block page_content %}
-<div style="margin: auto; width: 20%;height: 50%;overflow: auto;top: 0; left: 0; bottom: 0; right: 0;position: absolute;
-">
+<div id="main" style="max-width: 600px;">
     <form action="{{ url_for('activity.new_activity') }}" method="post">
         {{ form.hidden_tag() }}
         {{ wtf.form_errors(form, hiddens="only") }}

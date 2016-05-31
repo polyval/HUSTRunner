@@ -5,10 +5,10 @@ a{
 a:link{
 	color:#37a;
 }
-
-img{
-max-width: 600px;
-max-height: 600px;
+.article img{
+    max-width: 600px;
+    max-height: 600px;
+    display: block !important;
 }
 .face{
     position: absolute;
@@ -74,8 +74,27 @@ ul{
     margin-left: 12px;
 }
 /*navbar*/
+.navbar-default{
+    background-color: #BADA55;
+}
+.navbar-brand{
+    color: #505B1E !important;
+}
 .top-nav-link{
 	height: 55px;
+    color: #505B1E !important;
+}
+a.top-nav-link:hover, .active>a.top-nav-link{
+    background-color: #A3C43B !important;
+}
+.dropdown-menu{
+    background-color: #BADA55;
+}
+.dropdown-menu li a:hover, .dropdown-menu li.active a{
+    background-color: #A3C43B !important;
+}
+.navbar-right a{
+    color: #505B1E !important;
 }
 .container{
 	max-width: 990px;
@@ -109,6 +128,13 @@ ul{
  }
  .popover{
     width: 315px;
+ }
+ /*body*/
+ #main {
+    overflow: hidden;
+ }
+ .topic-tab .on{
+    color:#372;
  }
 /*post*/
 .post-info li {
@@ -161,6 +187,7 @@ h4 a:visited{
 .article{
 	max-width: 800px;
 	margin-top: 30px;
+    padding-bottom: 10px; 
 }
 .article-main{
     overflow: hidden;
@@ -278,6 +305,9 @@ h4 a:visited{
 /*settings*/
 .settings-sections {
 	margin-top: 20px;
+	margin-bottom: 10px;
+	overflow: hidden;
+	min-height: 340px;
 }
 .settings-item {
 	display: inline;
@@ -346,10 +376,7 @@ h4 a:visited{
 	font-size: 1.4em;
 }
 .avatar-editor{
-	width: 100px;
-	height: 100px;
-	float: left;
-	padding: 0px;
+	padding-bottom: 10px;
 	overflow: hidden;
 }
 .avatar{
@@ -380,7 +407,6 @@ h4 a:visited{
 	border-left-color: #eee;  
 }
 .profile-navbar{
-    margin-top: 50px;
     border-bottom: none;
     border-top: 1px solid #ddd;
     border-top-right-radius: 4px;
@@ -428,7 +454,7 @@ h4 a:visited{
 	padding-bottom: 12px;
 	overflow: hidden;
 }
-.user-brief .toggle-follow{
+.toggle-follow{
 	float: right;
 	width: 78px;
 	height: 22px;
@@ -460,6 +486,9 @@ h4 a:visited{
     font-weight:400;
 }
 /*inbox*/
+.inbox{
+    min-height: 340px;
+}
 .modal-body{
     padding: 30px;
 }
@@ -470,6 +499,7 @@ h4 a:visited{
     float: right;
     margin-top: -10px;
     outline: none !important;
+    background: #BADA55;
 }
 .pm-item-wrap{
     border-top: solid 1px #ccc;
@@ -552,4 +582,12 @@ h4 a:visited{
 @keyframes target-fade {
     from { background-color: red; }
     to { background-color: transparent; }
+}
+/*footer*/
+#footer{
+    padding: 20px 0;
+    margin-top: 10px;
+    border-top: 1px solid #eee;
+    color: #767676;
+    clear: both;
 }

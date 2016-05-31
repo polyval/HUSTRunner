@@ -8,31 +8,38 @@
         <div class="profile-main">
             <div class="top">
                 <span class="name">{{ user.username }}</span>
+                {% if current_user.id != user.id %}
+                {% if current_user.is_following(user) %}
+                <button class="btn btn-default btn-unfollow toggle-follow" data-id="{{ user.id }}">取消关注</button>
+                {% else %}
+                <button class="btn btn-default btn-follow toggle-follow" data-id="{{ user.id }}">关注</button>
+                {% endif %}
+                {% endif %}
                 <!--{% if user.title %}-->
                 <!--<span class="label label-info">{{ user.title }}</span>-->
                 <!--{% endif %}-->
             </div>
-            <div class="avatar-editor col-md-2">
+            <div class="avatar-editor clearfix">
                 <form id="avatar_form" action="/avatar" enctype="multipart/form-data" style="display:none;" method="POST" target="avatar_iframe">
                     <input id="avatar_input" name="picture" type="file" class="file" accept="image/*">
                 </form>
                 <img src="{{ current_user.avatar }}" class="avatar" data-toggle="tooltip" data-placement="bottom" title="更换头像">
                 <iframe id='avatar_iframe' name="avatar_iframe" style="display: none;"></iframe>
-            </div>
-            <div class="user-describe">
-                <div class="short-info">
-                {% if user.school %}{<span>{ user.school }}</span>{% endif %}
-                {% if user.gender %}
-                    {% if user.gender == '男' %}
-                    <i class="fa fa-mars" aria-hidden="true"></i>
-                    {% else %}
-                    <i class="fa fa-venus" aria-hidden="true"></i>
+                <div class="user-describe">
+                    <div class="short-info">
+                    {% if user.school %}{<span>{ user.school }}</span>{% endif %}
+                    {% if user.gender %}
+                        {% if user.gender == '男' %}
+                        <i class="fa fa-mars" aria-hidden="true"></i>
+                        {% else %}
+                        <i class="fa fa-venus" aria-hidden="true"></i>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
-                {% if user.signature %}<span>{{ user.signature }}</span>{% endif %}
-                </div>
-                <div class="description">
-                {% if user.about_me %}<span>{{ user.about_me }}</span>{% endif %}
+                    {% if user.signature %}<span>{{ user.signature }}</span>{% endif %}
+                    </div>
+                    <div class="description">
+                    {% if user.about_me %}<span>{{ user.about_me }}</span>{% endif %}
+                    </div>
                 </div>
             </div>
         </div>

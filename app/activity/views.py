@@ -33,3 +33,4 @@ def new_activity():
         return redirect(url_for('main.index'))
     return render_template('new_activity.html', form=form)
 
+# TODO: view activity

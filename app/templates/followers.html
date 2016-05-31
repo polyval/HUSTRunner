@@ -14,30 +14,3 @@
 </div>
 {% endif %}
 {% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script type="text/javascript">
-    $(function(){
-
-        $('.toggle-follow').on('click', function(){
-            var $btn = $(this)
-            var user_id = $btn.attr('data-id');
-            var flag = $btn.hasClass('btn-unfollow');
-            var post_to = '{{ url_for('apis.toggle_follow') }}'
-
-            if (flag){
-                    $btn.removeClass('btn-unfollow');
-                    $btn.addClass('btn-follow');
-                    $btn.html('关注');
-                } else{
-                    $btn.removeClass('btn-follow');
-                    $btn.addClass('btn-unfollow');
-                    $btn.html('取消关注');
-                };
-
-            $.post(post_to, {user_id: user_id, unfollow: flag});
-        });
-    })
-</script>
-{% endblock %}

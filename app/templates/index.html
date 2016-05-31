@@ -13,9 +13,9 @@
                 <a href="{{ url_for('activity.new_activity') }}">发起活动</a>
             </div>
             <div class="topic-tab">
-                <a href="/">最近话题</a>
+                <a href="{{ url_for('main.index', _external=True) }}">最近话题</a>
                 <i>/</i>
-                <a href="/?type=essence">最热话题</a>
+                <a href="{{ url_for('main.index', _external=True) }}?type=essence">最热话题</a>
             </div>
         </div>
         {% for post in posts %}
@@ -44,6 +44,7 @@
         {% endif %}
     </div>
     <!--right-->
+    {% if activities %}
     <div class="col-md-4">
         {% for activity in activities %}
         <div class="panel panel-default panel-widget">
@@ -73,6 +74,7 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 </div>
 {% endblock %}
 

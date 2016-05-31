@@ -9,10 +9,11 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">-->
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/vendors/fancybox/jquery.fancybox.css" type="text/css" media="screen">
 {% endblock %}
 
 {% block navbar %}
-<div class="navbar navbar-default" role="navigation">
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -31,13 +32,13 @@
                 <li><a href="{{ url_for('main.topic', topic_id=3) }}" class="top-nav-link">赛事活动</a></li>
                 <li><a href="{{ url_for('main.topic', topic_id=4) }}" class="top-nav-link">灌水</a></li>
                 {% if current_user.is_authenticated %}
-                <li><a href="javascript:void(0)" data-placement="bottom" data-toggle="popover" data-container="body" role="button" data-html="true"><span class="notify">消息</span>{% if current_user.notify_count > 0 %}<span class="badge plain-noti">{{ current_user.notify_count }}</span>{% endif %}</a></li>
+                <li><a href="javascript:void(0)" data-placement="bottom" data-toggle="popover" data-container="body" role="button" data-html="true" class="top-nav-link"><span class="notify">消息</span>{% if current_user.notify_count > 0 %}<span class="badge plain-noti">{{ current_user.notify_count }}</span>{% endif %}</a></li>
                 {% endif %}
                 <div class="hide" id="popover-notify">
                     <ul class="nav nav-pills">
-                        <li><a data-toggle="pill" href=".message-menu" class="notify-button" data-action="comment">消息</a></li>
-                        <li><a data-toggle="pill" href=".user-menu" class="notify-button" data-action="follow">关注</a></li>
-                        <li><a data-toggle="pill" href=".thumbs-up-menu" data-action="vote" class="notify-button">赞</a></li>
+                        <li style="width: 33%"><a data-toggle="pill" href=".message-menu" class="notify-button" data-action="comment">消息</a></li>
+                        <li style="width: 33%; margin-left:0"><a data-toggle="pill" href=".user-menu" class="notify-button" data-action="follow">关注</a></li>
+                        <li style="width: 33%; margin-left:0"><a data-toggle="pill" href=".thumbs-up-menu" data-action="vote" class="notify-button">赞</a></li>
                     </ul>
                     <div class="notify-wrap tab-content">
                         <div class="tab-pane fade in active thumbs-up-menu">
@@ -107,7 +108,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container" style="padding-top: 70px;">
     {% for message in get_flashed_messages() %}
     <div class="alert alert-warning">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -116,6 +117,10 @@
     {% endfor %}
     {% block page_content %}
     {% endblock %}
+    <div id="footer">
+    <span>
+    © 2016 HUSTRunner</span>
+    </div>
 </div>
 {% endblock %}
 
@@ -125,10 +130,15 @@
 {{ moment.lang("zh-cn") }}
 <script src="{{ url_for('static', filename='js/jquery.facedetection.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.pack.js"></script>
 <script>
 $(function(){
+
+    $(".article img").fancybox();
+
     // highlight tab
     $('a[href="' + this.location.pathname + '"]').parents('li,ul').addClass('active');
+    $('a[href="{{ request.url }}"]').addClass('on');
     // hide alert automatically
     window.setTimeout(function() {
     $(".alert-warning").fadeTo(500, 0).slideUp(500, function(){
