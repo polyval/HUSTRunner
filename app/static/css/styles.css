@@ -65,6 +65,13 @@ ul{
     top: 8px;
     left: 32px;
 }
+.noti-content{
+    border-bottom: 1px solid #eee;
+    padding: 7px 11px
+}
+a.notify-button {
+    text-align: center;
+}
 .dropdown-toggle .badge{
     left: 30px;
     top: 8px;

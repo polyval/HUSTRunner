@@ -32,7 +32,14 @@
                 <li><a href="{{ url_for('main.topic', topic_id=3) }}" class="top-nav-link">赛事活动</a></li>
                 <li><a href="{{ url_for('main.topic', topic_id=4) }}" class="top-nav-link">灌水</a></li>
                 {% if current_user.is_authenticated %}
-                <li><a href="javascript:void(0)" data-placement="bottom" data-toggle="popover" data-container="body" role="button" data-html="true" class="top-nav-link"><span class="notify">消息</span>{% if current_user.notify_count > 0 %}<span class="badge plain-noti">{{ current_user.notify_count }}</span>{% endif %}</a></li>
+                <li>
+                    <a href="javascript:void(0)" data-placement="bottom" data-toggle="popover" data-container="body" role="button" data-html="true" class="top-nav-link">
+                    消息
+                    {% if current_user.notify_count > 0 %}
+                    <span class="badge plain-noti">{{ current_user.notify_count }}</span>
+                    {% endif %}
+                    </a>
+                </li>
                 {% endif %}
                 <div class="hide" id="popover-notify">
                     <ul class="nav nav-pills">
@@ -43,7 +50,7 @@
                     <div class="notify-wrap tab-content">
                         <div class="tab-pane fade in active thumbs-up-menu">
                         {% for notify in current_user.unread_notifications if notify['action'] == 'vote' %}
-                            <div>获得{{ notify['notify']|length }}赞同:
+                            <div class="noti-content">获得{{ notify['notify']|length }}赞同:
                             {% if notify['entity'].slug %}
                             <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].slug) }}">{{ notify['entity'].title }}</a></span>
                             {% elif notify['entity'] %}
@@ -58,22 +65,19 @@
 
                         <div class="tab-pane fade message-menu">
                         {% for notify in current_user.unread_notifications if notify['action'] == 'comment' %}
-                            <div>
+                            <div class="noti-content">
                                 {% for noti in notify['notify'] %}
                                 <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a></span>
                                 {% endfor %}
-                            {% if notify['entity'].slug %}回复了你的文章
-                            <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].slug) }}">{{ notify['entity'].title }}</a></span>
-                            {% elif notify['entity'] %}回复了你在
-                            <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].post.slug) }}#{{ notify['entity'].id }}comment">{{ notify['entity'].post.title }}</a>中的评论</span>
-                            {% endif %}
+                            {% if notify['entity'].parent %}回复了你在{% else %}回复你的文章{% endif %}
+                            <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].post.slug) }}#{{ notify['entity'].id }}comment">{{ notify['entity'].post.title }}</a>{% if notify['entity'].parent %}中的评论{% endif %}</span>
                             </div>
                         {% endfor %}
                         </div>
 
                         <div class="tab-pane fade user-menu">
                         {% for notify in current_user.unread_notifications if notify['action'] == 'follow' %}
-                            <div>
+                            <div class="noti-content">
                                 {% for noti in notify['notify'] %}
                                 <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a>关注了你</span>
                                 {% endfor %}
@@ -137,48 +141,4 @@
 <script src="{{ url_for('static', filename='js/jquery.facedetection.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.pack.js"></script>
-<script>
-$(function(){
-
-    $(".article img").fancybox();
-
-    // highlight tab
-    $('a[href="' + this.location.pathname + '"]').parents('li,ul').addClass('active');
-    $('a[href="{{ request.url }}"]').addClass('on');
-    // hide alert automatically
-    window.setTimeout(function() {
-    $(".alert-warning").fadeTo(500, 0).slideUp(500, function(){
-        $(this).remove();
-    });
-    }, 2000);
-
-    $("[data-toggle=popover]").popover({
-    html: true, 
-    delay: 100,
-    content: function() {
-          return $('#popover-notify').html();
-        }
-    });
-   
-    $('[data-toggle="popover"]').on('shown.bs.popover', function(){
-        $('.notify-button').click(function(){
-            var action = $(this).data('action');
-            var $button = $(this);
-            var post_to = '/apis/notification';
-            $.post(post_to, {action: action},
-                function(response){
-                    if(response.new_count > 0){
-                        $('.plain-noti').html(response.new_count);
-                    }else{
-                        $('.plain-noti').remove();
-                    };
-                });
-        });
-    });
-
-    $('[data-toggle="tooltip"]').tooltip({
-            container: 'body' // http://stackoverflow.com/questions/18194705/display-bootstrap-popovers-outside-divs-with-overflowhidden
-        });
-})
-</script>
 {% endblock %}

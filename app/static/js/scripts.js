@@ -115,4 +115,59 @@ $(function(){
 
         $.post(post_to, {user_id: user_id, unfollow: flag});
     });
+
+    // popover
+    $("[data-toggle=popover]").popover({
+    html: true, 
+    delay: 100,
+    content: function() {
+          return $('#popover-notify').html();
+        }
+    });
+    // click outside of popover to hide it
+    $('html').on('click', function(e) {
+        if (typeof $(e.target).data('original-title') == 'undefined' &&
+        !$(e.target).parents().is('.popover.in')) {
+        $('[data-original-title]').popover('hide');
+    }
+    });
+    // temporarily fix popover bug in Bootstrap 3.3.5
+    $('body').on('hidden.bs.popover', function (e) {
+    $(e.target).data("bs.popover").inState.click = false;
+    });
+    
+    $('[data-toggle="popover"]').on('shown.bs.popover', function(){
+        $('.notify-button').click(function(){
+            var action = $(this).data('action');
+            var $button = $(this);
+            var post_to = '/apis/notification';
+            $.post(post_to, {action: action},
+                function(response){
+                    if(response.new_count > 0){
+                        $('.plain-noti').html(response.new_count);
+                    }else{
+                        $('.plain-noti').remove();
+                    };
+                });
+        });
+    });
+
+    // tooltip initialization
+    $('[data-toggle="tooltip"]').tooltip({
+            container: 'body' // http://stackoverflow.com/questions/18194705/display-bootstrap-popovers-outside-divs-with-overflowhidden
+    });
+    
+    // fancybox
+    $(".article img").fancybox();
+
+    // highlight tab
+    $('a[href="' + this.location.pathname + '"]').parents('li,ul').addClass('active');
+    $('a[href="' + this.location.href + '"]').addClass('on');
+
+    // hide alert automatically
+    window.setTimeout(function() {
+    $(".alert-warning").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove();
+    });
+    }, 2000);
 });
