@@ -16,6 +16,7 @@
 	</div>
 	<div class="pm-item-wrap">
 		{% for conversation in conversations %}
+        {% if conversation.has_message %}
 		<div class="pm-item">
 			<a href="{{ url_for('user.profile', username=conversation.from_user.username) }} " class="link-avatar50">
 				{% if conversation.to_user.avatar %}
@@ -40,6 +41,7 @@
 				<a href="javascript:void(0)" class="delete" data-conversation="{{ conversation.id }}">删除</a>
 			</div>
 		</div>
+        {% endif %}
 		{% endfor %}
 	</div>
     {% if pagination.has_prev or pagination.has_next %}

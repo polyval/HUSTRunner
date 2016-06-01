@@ -41,6 +41,10 @@ class Conversation(db.Model):
         """Returns the last message object."""
         return self.messages[-1]
 
+    @property
+    def has_message(self):
+        return True if self.messages else False
+
 
 class Message(db.Model):
     __tablename__ = "messages"
