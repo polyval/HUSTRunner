@@ -1,2 +1,7 @@
+*.py[cod]
+
+/data-test.sqlite
+/flaskbb
+/flasky-master
 /flask
 /.idea

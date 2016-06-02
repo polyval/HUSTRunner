@@ -16,7 +16,7 @@
                 <span>{{ group.grouper }}</span>
             </div>
             {% for notify in group.list %}
-            <div>
+            <div class="noti-item">
                 {% if notify.action == 'vote' %}
                 <div>获得{{ notify['notify']|length }}赞同:
                     {% if notify['entity'].slug %}

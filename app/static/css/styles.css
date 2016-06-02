@@ -103,8 +103,14 @@ a.notify-button {
 a.top-nav-link:hover, .active>a.top-nav-link{
     background-color: #A3C43B !important;
 }
+a.dropdown-toggle:hover{
+    background-color: #A3C43B !important;
+}
 .dropdown-menu{
     background-color: #BADA55;
+    left: 0 !important;
+    text-align: center;
+    min-width: 50px;
 }
 .dropdown-menu li a:hover, .dropdown-menu li.active a{
     background-color: #A3C43B !important;
@@ -602,6 +608,22 @@ h4 a:visited{
 @keyframes target-fade {
     from { background-color: red; }
     to { background-color: transparent; }
+}
+/*notification*/
+.noti-header{
+     font-weight: bold;
+    border-bottom: 1px solid #CCC;
+    padding-bottom: 10px;
+     margin-bottom: 10px;
+}
+.notis-wrap {
+     margin-bottom: 10px;
+}
+.noti-item {
+    padding: 8px 0;
+}
+.day {
+    font-weight: bold;
 }
 /*footer*/
 #footer{
