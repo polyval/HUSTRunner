@@ -53,7 +53,7 @@
             </div>
             <div class="panel-body panel-widget-body">
                 <div class="info">
-                    <span class="initiator">发起者:<a href="#" data-toggle="tooltip" data-placement="top" title="{{ activity.initiator.username }}"><img class="pil" src="{{ activity.initiator.avatar }}"></a></span>
+                    <span class="initiator">发起者:<a href="{{ url_for('user.profile', username=activity.initiator.username) }}" data-toggle="tooltip" data-placement="top" title="{{ activity.initiator.username }}"><img class="pil" src="{{ activity.initiator.avatar }}"></a></span>
                     <span class="expired-time" data-created="{{ activity.date_created }}" data-expired="{{ activity.date_expired }}"></span>
                 </div>
                 <div class="activity-content" style="clear: both;">
@@ -63,7 +63,7 @@
                 <div class="user-wrap">
                     {% for participant in activity.participants.all() %}  
                     <div class="user-face" data-user="{{ participant.id }}">
-                        <a href="#" data-toggle="tooltip" data-placement="top" title="{{ participant.username }}"><img class="pil" src="{{ participant.avatar }}"></a>
+                        <a href="{{ url_for('user.profile', username=participant.username) }}" data-toggle="tooltip" data-placement="top" title="{{ participant.username }}"><img class="pil" src="{{ participant.avatar }}"></a>
                     </div>
                     {% endfor %}
                 </div>

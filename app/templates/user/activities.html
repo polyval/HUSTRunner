@@ -11,7 +11,7 @@
         {% for activity in activities %}
         <li>
             <span class="time">{{ moment(activity.date_created).format("YYYY年MM月DD日 HH:mm") }}</span>
-            <a href="#"><span>{{ activity.title }}</span></a>
+            <a href="{{ url_for('activity.view_activity', id=activity.id) }}"><span>{{ activity.title }}</span></a>
         </li>
         {% endfor%}
     </ul>

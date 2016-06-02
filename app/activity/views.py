@@ -18,6 +18,13 @@ def join_activity():
     return jsonify(msg=action + 'success')
 
 
+@activity.route('/activity/<int:id>')
+@login_required
+def view_activity(id):
+    activity = Activity.query.get(id)
+    return render_template('activity.html', activity=activity)
+
+
 @activity.route('/new_activity', methods=['GET', 'POST'])
 @login_required
 def new_activity():
