@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ user.username }}-HUSTRunner{% endblock %}
+{% block title %}{{ super() }}{{ user.username }}-HUSTRunner{% endblock %}
 
 {% block page_content %}
 <div class="main-content col-md-8">

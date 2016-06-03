@@ -1,6 +1,6 @@
 {% extends "user/_profile.html" %}
 
-{% block title %}{{ user.username }} 参加的活动-HUSTRunner{% endblock %}
+{% block title %}{{ super() }}{{ user.username }} 参加的活动-HUSTRunner{% endblock %}
 {% block left_bottom %}
 <div class="profile-card">
 <div class="section-head">

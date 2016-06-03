@@ -144,9 +144,13 @@ $(function(){
             $.post(post_to, {action: action},
                 function(response){
                     if(response.new_count > 0){
+                        var replaced = $('title').html().replace(/\d(?=条)/g, response.new_count);
+                        $('title').html(replaced);
                         $('.plain-noti').html(response.new_count);
                     }else{
                         $('.plain-noti').remove();
+                        var replaced = $('title').html().replace(/\([^)]+\)/g,'');
+                        $('title').html(replaced);
                     };
                 });
         });
@@ -170,4 +174,11 @@ $(function(){
         $(this).remove();
     });
     }, 2000);
+    // time to expired date
+    $('.expired-time').each(function(i, e){
+            var date_created = moment($(e).data('created'));
+            var now = moment();
+            var date_expired = moment($(e).data('expired'));
+            $(e).html(now.to(date_expired) + '到期');
+    });
 });

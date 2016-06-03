@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "_macros.html" as macros %}
 
-{% block title %}首页-HUSTRunner{% endblock %}
+{% block title %}{{ super() }}首页-HUSTRunner{% endblock %}
 
 {% block page_content %}
 <div class="row">
@@ -82,14 +82,6 @@
 {{ super() }}
 <script type="text/javascript">
     $(function(){
-
-        $('.expired-time').each(function(i, e){
-            var date_created = moment($(e).data('created'));
-            var now = moment();
-            var date_expired = moment($(e).data('expired'));
-            $(e).html(now.to(date_expired) + '到期');
-        });
-        
         $('.join').on('click', function(){
             var post_to = '{{ url_for('activity.join_activity') }}';
             var action = $(this).html();

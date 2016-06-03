@@ -1,6 +1,15 @@
 {% extends "bootstrap/base.html" %}
 
-{% block title %}HUSTRunner{% endblock %}
+{% block title %}
+{% if current_user.is_authenticated %}
+{% if current_user.notify_count > 0 %}
+({{ current_user.notify_count }}条消息
+{% if current_user.unread_message_count > 0 %}
+,{{ current_user.unread_message_count }}条私信
+{% endif %})
+{% endif %}
+{% endif %}
+{% endblock %}
 
 {% block head %}
 {{ super() }}

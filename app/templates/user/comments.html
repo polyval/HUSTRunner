@@ -1,6 +1,6 @@
 {% extends "user/_profile.html" %}
 
-{% block title %}{{ user.username }} 的回复-HUSTRunner{% endblock %}
+{% block title %}{{ super() }}{{ user.username }} 的回复-HUSTRunner{% endblock %}
 {% block left_bottom %}
 <div class="profile-card">
 <div class="section-head">

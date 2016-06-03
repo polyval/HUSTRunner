@@ -27,6 +27,8 @@
         <div class="operation">
             {% if current_user.id == post.author.id %}
             <a href="{{ url_for('forum.new_post', slug=post.slug) }}" class="modify">修改</a>
+            {% else %}
+            <a href="javascript:void(0)" class="modify"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>赞</a>
             {% endif %}
             {% if current_user.is_administrator() %}
             <a href="javascript:void(0)" class="delete-post">删除</a>
