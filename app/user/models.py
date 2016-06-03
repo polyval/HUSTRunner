@@ -6,7 +6,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
-from sqlalchemy import func, and_
+from sqlalchemy import func
 
 from app import db
 from ..activity.models import Activity

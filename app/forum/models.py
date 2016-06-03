@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from slugify import slugify
-
 from ..user.models import User
 from app import db
 
@@ -21,6 +20,7 @@ class Post(db.Model):
     views = db.Column(db.Integer, default=0)
     sticky = db.Column(db.Boolean, default=False)
     hot_index = db.Column(db.Integer, default=0)
+    votes = db.Column(db.Integer, default=0)
     comments = db.relationship(
         'Comment', backref='post', lazy='dynamic', cascade='all, delete-orphan')
 
@@ -78,6 +78,30 @@ class Post(db.Model):
                 )
             return slug
         return slug_title
+
+    def has_voted(self, user_id):
+        """
+        Check whether the user vote already
+        """
+        vote = PostVote.query.filter(PostVote.user_id == user_id,
+                                     PostVote.post_id == self.id).first()
+        return False if not vote else True
+
+    def vote(self, user_id):
+        """
+        if a user has voted the post, the next vote would be
+        treated as unvote
+        :param user_id: id of specific user
+        """
+        if not self.has_voted(user_id):
+            vote = PostVote(user_id=user_id, post_id=self.id)
+            db.session.add(vote)
+            self.votes += 1
+        else:
+            PostVote.query.filter(PostVote.user_id == user_id,
+                                  PostVote.post_id == self.id).delete()
+            self.votes -= 1
+        db.session.commit()
 
 
 class Topic(db.Model):
@@ -180,4 +204,13 @@ class CommentVote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comment_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
+    date_created = db.Column(db.DateTime, default=datetime.utcnow())
+
+
+class PostVote(db.Model):
+    __tablename__ = "post_votes"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
     date_created = db.Column(db.DateTime, default=datetime.utcnow())
