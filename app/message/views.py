@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+from itertools import groupby
 
 from flask import request, redirect, url_for, render_template
 from flask_login import login_required, current_user
-
-from .models import Conversation, Message
+from .models import Conversation, Message, Notification
 from ..user.models import User
 from . import message
 from app import db
@@ -53,8 +53,8 @@ def inbox():
 
     page = request.args.get('page', 1, type=int)
 
-    pagination = Conversation.query.filter_by(user_id=current_user.id).\
-        order_by(Conversation.date_created.desc()).\
+    pagination = Conversation.query.filter_by(user_id=current_user.id). \
+        order_by(Conversation.date_created.desc()). \
         paginate(page=page, per_page=20, error_out=False)
 
     conversations = pagination.items
@@ -104,4 +104,19 @@ def view_conversation(conversation_id):
 @message.route('/notifications')
 @login_required
 def notifications():
-    return render_template("notifications.html")
+    page = request.args.get('page', 1, type=int)
+    pagination = Notification.query.filter_by(receive_id=current_user.id). \
+        order_by(Notification.date_created.desc()).paginate(
+        page=page, per_page=50, error_out=False
+    )
+    messy = []
+    for notif in pagination.items:
+        messy.append(
+            (notif.date_created.strftime('%Y-%m-%d'), notif.action, notif.entity, notif))
+        messy.sort(key=lambda x: (x[0], x[1], x[2]))
+    items = []
+    for key, group in groupby(messy, key=lambda x: (x[0], x[1], x[2])):
+        items.append(
+            {'date': key[0], 'action': key[1], 'entity': key[2],
+             'notify': [noti[3] for noti in group]})
+    return render_template("notifications.html", items=items, pagination=pagination)

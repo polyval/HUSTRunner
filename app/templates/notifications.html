@@ -11,7 +11,7 @@
             <span class="unread-amount"></span>
         </div>
         <div class="notis-wrap">
-            {% for group in current_user.unread_notifications|groupby('date')|reverse %}
+            {% for group in items|groupby('date')|reverse %}
             <div class="day">
                 <span>{{ group.grouper }}</span>
             </div>
@@ -50,6 +50,11 @@
             {% endfor %}
             {% endfor %}
         </div>
+        {% if pagination.has_prev or pagination.has_next %}
+        <div class="pagination">
+            {{ macros.pagination_widget(pagination, '.notifications') }}
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
