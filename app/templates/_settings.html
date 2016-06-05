@@ -7,10 +7,3 @@
     <li role="presentation"><a href="{{ url_for('user.notification') }}">消息</a></li>
 </ul>
 {% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-    $('a[href="' + this.location.pathname + '"]').parents('li,ul').addClass('active');
-</script>
-{% endblock %}

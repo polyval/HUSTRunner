@@ -181,4 +181,42 @@ $(function(){
             var date_expired = moment($(e).data('expired'));
             $(e).html(now.to(date_expired) + '到期');
     });
+    // toggle visibility of operations
+    $(document).on('mouseenter', '.comment-content, .article-main', function(){
+        $(this).children('.operation').css('visibility', 'visible');
+    });
+
+    $(document).on('mouseleave', '.comment-content, .article-main', function(){
+        $(this).children('.operation').css('visibility', 'hidden');
+    });
+
+    // collapse comments
+    $(document).on('click', '.collapse-comments', function() {
+            var childId = $(this).attr('data-childId');
+            var count = $(this).attr('data-comments');
+
+            $('#'+childId).toggle();
+            if(count){
+                $(this).html($(this).html() == '回复'+'('+count+')' ? '收起回复' : '回复'+'('+count+')');
+            }
+    });
+
+    $(document).on('click', '.comment-actions a', function() {
+            $(this).closest('.comment-actions').closest('.comment-bar').hide();
+    });
+
+    // delete comment
+    $('#deleteModal').on('show.bs.modal', function(event){
+        var id = $(event.relatedTarget).data('id');
+        var post_to = '/apis/comments/' + id
+        $('.delete').on('click', function(){
+            $.ajax({
+                url: post_to,
+                type: 'DELETE',
+                success: function(){
+                    $('#'+id+'parent').remove();
+                }
+            })
+        });
+    });
 });

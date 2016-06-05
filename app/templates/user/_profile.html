@@ -8,11 +8,13 @@
         <div class="profile-main">
             <div class="top">
                 <span class="name">{{ user.username }}</span>
+                {% if current_user.is_authenticated %}
                 {% if current_user.id != user.id %}
                 {% if current_user.is_following(user) %}
                 <button class="btn btn-default btn-unfollow toggle-follow" data-id="{{ user.id }}">取消关注</button>
                 {% else %}
                 <button class="btn btn-default btn-follow toggle-follow" data-id="{{ user.id }}">关注</button>
+                {% endif %}
                 {% endif %}
                 {% endif %}
                 <!--{% if user.title %}-->
