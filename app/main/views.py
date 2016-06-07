@@ -60,8 +60,6 @@ def topic(topic_id):
         posts = pagination.items
     else:
         abort(404)
-    if not posts:
-        abort(404)
     return render_template('topic.html', posts=posts, title=topic_title, pagination=pagination)
 
 
