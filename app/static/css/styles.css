@@ -434,6 +434,9 @@ h4 a:visited{
     border-top-right-radius: 4px;
     border-top-left-radius: 4px;
 }
+.post-title{
+    color: #999;
+}
 /*profile-sidebar*/
 .sidebar{
 	padding-left: 50px;

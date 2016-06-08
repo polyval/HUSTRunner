@@ -12,7 +12,10 @@
         <li>
             <span class="time">{{ moment(comment.date_created).format("YYYY年MM月DD日 HH:mm") }}</span>
             <span><i class="fa fa-comment-o" aria-hidden="true"></i></span>
-            <a href="{{ url_for('forum.view_post', slug=comment.post.slug) }}#{{ comment.id }}comment"><span>{{ comment.content_html[3:-4]|safe|truncate(50) }}</span></a>
+            <a href="{{ url_for('forum.view_post', slug=comment.post.slug) }}#{{ comment.id }}comment">
+                <span>{{ comment.content_html[3:-4]|safe|truncate(50) }}</span>
+                <span class="post-title">({{ comment.post.title }})</span>
+            </a>
         </li>
         {% endfor%}
     </ul>
