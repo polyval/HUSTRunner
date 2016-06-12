@@ -205,20 +205,6 @@ $(function(){
             $(this).closest('.comment-actions').closest('.comment-bar').hide();
     });
 
-    // delete comment
-    $('#deleteModal').on('show.bs.modal', function(event){
-        var id = $(event.relatedTarget).data('id');
-        var post_to = '/apis/comments/' + id
-        $('.delete').on('click', function(){
-            $.ajax({
-                url: post_to,
-                type: 'DELETE',
-                success: function(){
-                    $('#'+id+'parent').remove();
-                }
-            })
-        });
-    });
     // auto grow for textarea
     $('textarea').autogrow();
 });

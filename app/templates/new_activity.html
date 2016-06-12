@@ -6,7 +6,7 @@
 
 {% block page_content %}
 <div id="main" style="max-width: 600px;">
-    <form action="{{ url_for('activity.new_activity') }}" method="post">
+    <form action="{{ request.path }}" method="post">
         {{ form.hidden_tag() }}
         {{ wtf.form_errors(form, hiddens="only") }}
         {{ wtf.form_field(form.title) }}

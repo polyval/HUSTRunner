@@ -31,4 +31,92 @@
         </div>
     </div>
 </div>
+<div class="col-md-5">
+    <div class="feedback">
+        <div class="clearfix" id='question-form'>
+            <textarea placeholder="疑问..." class="form-control"></textarea>
+            <button class="btn btn-default btn-sm comment-btn" data-reply="{{ activity.initiator_id }}">确定</button>
+        </div>
+        <div>
+            {% for comment in activity.comments %}
+            <div class="comment" id="{{ comment.id }}comment">
+                <div class="user-face">
+                    <a href="{{ url_for('user.profile', username=comment.author.username) }}"><img class="pil" src="{{ comment.author.avatar }}"></a>
+                </div>
+                <div class="comment-content">
+                    <div class="bg-img-green">
+                        <h4>
+                            <a href="{{ url_for('user.profile', username=comment.author.username) }}">{{ comment.author.username }}</a>
+                            {% if comment.author_id == activity.initiator_id %}
+                            <span>(发起者)</span>
+                            {% endif %}
+                            {% if comment.to_id and comment.to_id != comment.author_id %}
+                            回复
+                            <a href="{{ url_for('user.profile', username=comment.target.username) }}">{{ comment.target.username }}</a>
+                            {% endif %}
+                            <span class="pubtime">{{ moment(comment.date_created).fromNow() }}</span>
+                        </h4>
+                    </div>
+                    <div class="content" style="white-space: pre-line;">
+                        {{ comment.content }}
+                    </div>
+                    {% if current_user.is_authenticated %}
+                    <div class="operation">
+                        {% if current_user.is_administrator() or comment.author.id == current_user.id %}
+                        <a href="javascript:void(0)" class="delete-comment" data-toggle="modal" data-target="#deleteModal" data-id="{{ comment.id }}">删除</a>
+                        {% endif %}
+                        <a href="javascript:void(0)" class="reply">回复</a>
+                    </div>
+                    {% endif %}
+                    <div class="comment-bar" style="display:none;">
+                        <form id="{{ comment.id }}form" class="comment-form">
+                            <textarea class="form-control"></textarea>
+                        </form>
+                        <div class="comment-actions">
+                            <a href="javascript:void(0)">取消</a>
+                            <button class="btn btn-sm btn-success comment-btn" data-reply="{{ comment.author_id}}">回复</button>
+                        </div>
+                    </div>
+            </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{{ macros.deleteModal() }}
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script>
+    $(function(){
+        $(document).on('click', '.reply', function(){
+            $(this).closest('.operation').next().toggle();
+        });
+
+        $(document).on('click', '.comment-btn', function(){
+            var to_id = $(this).data('reply');
+            var content = $(this).prev('textarea').val() || $(this).parent().prev().find('textarea').val();
+            if(content){
+                $.post('{{ request.path }}', {to_id: to_id, content: content}, function(response){
+                       location.reload();
+                });
+            };
+        });
+
+        $('#deleteModal').on('show.bs.modal', function(event){
+            var id = $(event.relatedTarget).data('id');
+            $('.delete').on('click', function(){
+                $.ajax({
+                    url: '{{ request.path }}',
+                    data: {id: id},
+                    type: 'DELETE',
+                    success: function(){
+                        $('#'+id+'comment').remove();
+                    }
+                })
+            });
+        });
+
+    });
+</script>
 {% endblock %}

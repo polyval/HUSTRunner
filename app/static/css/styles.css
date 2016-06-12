@@ -628,6 +628,14 @@ h4 a:visited{
 .day {
     font-weight: bold;
 }
+/*activity*/
+#question-form{
+    margin-bottom: 10px;
+}
+#question-form .comment-btn{
+    float: right;
+    margin-top: 8px;
+}
 /*footer*/
 #footer{
     padding: 20px 0;

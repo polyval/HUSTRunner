@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from .. import db
 from sqlalchemy.ext.hybrid import hybrid_property
 
@@ -26,6 +27,8 @@ class Activity(db.Model):
                                    secondary=participate,
                                    backref=db.backref('activities', lazy='dynamic'),
                                    lazy='dynamic')
+    comments = db.relationship(
+        'ActivityQuestion', backref='activity', lazy='dynamic', cascade='all, delete-orphan')
 
     def __init__(self, **kwargs):
         super(Activity, self).__init__(**kwargs)
@@ -48,3 +51,22 @@ class Activity(db.Model):
         return datetime.now() > self.date_expired
 
 
+class ActivityQuestion(db.Model):
+    __tablename__ = 'questions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    activity_id = db.Column(db.Integer, db.ForeignKey('activities.id'))
+    to_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    content = db.Column(db.String(500), nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.now())
+
+    @property
+    def author(self):
+        from app.user.models import User
+        return User.query.get(self.author_id)
+
+    @property
+    def target(self):
+        from app.user.models import User
+        return User.query.get(self.to_id)
