@@ -64,9 +64,9 @@ class Message(db.Model):
 class Notification(db.Model):
 
     """
-    target_type: post, comment, user
+    target_type: post, comment, user, activity
     action: vote，comment，follow
-    target: post_id, comment_id, user_id
+    target: post_id, comment_id, user_id, activity_question_id
     """
     __tablename__ = 'notifications'
 
@@ -94,12 +94,15 @@ class Notification(db.Model):
 
     def get_object(self):
         from ..user.models import User
+        from ..activity.models import ActivityQuestion
         if self.target_type == 'post':
             entity = Post.query.get(self.target)
         elif self.target_type == 'comment':
             entity = Comment.query.get(self.target)
-        else:
+        elif self.target_type == 'user':
             entity = User.query.get(self.target)
+        else:
+            entity = ActivityQuestion.query.get(self.target)
         return entity
 
     @staticmethod

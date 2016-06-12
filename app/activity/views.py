@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from . import activity
 from .. import db
 from .models import Activity, ActivityQuestion
+
 from .forms import ActivityForm
 
 
@@ -23,11 +24,21 @@ def join_activity():
 def view_activity(id):
     activity = Activity.query.get(id)
     if request.method == 'POST':
+        from ..message.models import Notification
+        to_id = request.form.get('to_id', type=int)
         q = ActivityQuestion(author_id=current_user.id,
-                             to_id=request.form.get('to_id', type=int),
+                             to_id=to_id,
                              content=request.form.get('content'),
                              activity_id=id)
         db.session.add(q)
+        db.session.commit()
+        if current_user.id != to_id:
+            n = Notification(sender_id=current_user.id,
+                             receive_id=to_id,
+                             target=q.id,
+                             target_type='activity',
+                             action='comment')
+            db.session.add(n)
         return jsonify(msg='success')
     if request.method == 'DELETE':
         q = ActivityQuestion.query.get(request.form.get('id', type=int))

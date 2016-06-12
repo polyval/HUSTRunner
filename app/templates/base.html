@@ -58,7 +58,7 @@
                 </ul>
                 <div class="notify-wrap tab-content">
                     <div class="tab-pane fade in active thumbs-up-menu">
-                    {% for notify in current_user.unread_notifications if notify['action'] == 'vote' %}
+                    {% for notify in current_user.unread_notifications|reverse if notify['action'] == 'vote' %}
                         <div class="noti-content">获得{{ notify['notify']|length }}赞同:
                         {% if notify['entity'].slug %}
                         <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].slug) }}">{{ notify['entity'].title }}</a></span>
@@ -73,19 +73,24 @@
                     </div>
 
                     <div class="tab-pane fade message-menu">
-                    {% for notify in current_user.unread_notifications if notify['action'] == 'comment' %}
+                    {% for notify in current_user.unread_notifications|reverse if notify['action'] == 'comment' %}
                         <div class="noti-content">
                             {% for noti in notify['notify'] %}
                             <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a></span>
                             {% endfor %}
+                        {% if notify['entity'].to_id %}
+                        在活动
+                        <span><a href="{{ url_for('activity.view_activity', id=notify['entity'].activity.id) }}#{{ notify['entity'].id }}comment">{{ notify['entity'].activity.title }}</a>中回复了你</span>
+                        {% else %}
                         {% if notify['entity'].parent %}回复了你在{% else %}回复你的文章{% endif %}
                         <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].post.slug) }}#{{ notify['entity'].id }}comment">{{ notify['entity'].post.title }}</a>{% if notify['entity'].parent %}中的评论{% endif %}</span>
+                        {% endif %}
                         </div>
                     {% endfor %}
                     </div>
 
                     <div class="tab-pane fade user-menu">
-                    {% for notify in current_user.unread_notifications if notify['action'] == 'follow' %}
+                    {% for notify in current_user.unread_notifications|reverse if notify['action'] == 'follow' %}
                         <div class="noti-content">
                             {% for noti in notify['notify'] %}
                             <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a>关注了你</span>

@@ -33,10 +33,15 @@
                         {% for noti in notify['notify'] %}
                         <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a></span>
                         {% endfor %}
+                        {% if notify['entity'].to_id %}
+                        在活动
+                        <span><a href="{{ url_for('activity.view_activity', id=notify['entity'].activity.id) }}#{{ notify['entity'].id }}comment">{{ notify['entity'].activity.title }}</a>中回复了你</span>
+                        {% else %}
                         {% if notify['entity'].slug %}回复了你的文章
                         <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].slug) }}">{{ notify['entity'].title }}</a></span>
                         {% elif notify['entity'] %}回复了你在
                         <span><a href="{{ url_for('forum.view_post', slug=notify['entity'].post.slug) }}#{{ notify['entity'].id }}comment">{{ notify['entity'].post.title }}</a>中的评论</span>
+                        {% endif %}
                         {% endif %}
                     </div>
                 {% else %}
