@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "_macros.html" as macros %}
+{% import "_macros.html" as macros with context %}
 
 {% block title %}{{ super() }}首页-HUSTRunner{% endblock %}
 
@@ -52,6 +52,7 @@
                 <span class="panel-title">{{ activity.title }}</span>
                 {% if current_user.id == activity.initiator_id %}
                 <a href="{{ url_for('activity.new_activity', id=activity.id) }}">修改</a>
+                <a href="{{ url_for('activity.view_activity', id=activity.id) }}">详情</a>
                 {% endif %}
             </div>
             <div class="panel-body panel-widget-body">
@@ -85,34 +86,7 @@
 {{ super() }}
 <script type="text/javascript">
     $(function(){
-        $('.join').on('click', function(){
-            var post_to = '{{ url_for('activity.join_activity') }}';
-            var action = $(this).html();
-            var $button = $(this);
-            var activity_id = $(this).data('activityid');
-            if(action == '参加'){
-                $(this).html('取消参加');
-                action = 'join'
-            }else{
-                $(this).html('参加');
-                action = 'quit'
-            };
-
-            $.post(post_to, {action: action, activity_id: activity_id }, 
-                function(){
-                    if(action == 'join'){
-                        html = '<div class="user-face" data-user="{{ current_user.id }}"><a href="#" data-toggle="tooltip" data-placement="top" title="{{ current_user.username }}"><img class="pil" src="{{ current_user.avatar }}"></a></div>'
-                        $button.parent().prev('.user-wrap').append(html);
-                        $count = $button.parent().prev().prev('.count').children('span');
-                        $count.html(parseInt($count.html()) + 1);
-                    }else{
-                        $button.parent().prev('.user-wrap').children('.user-face[data-user={{ current_user.id }}]').remove();
-                        $count = $button.parent().prev().prev('.count').children('span');
-                        $count.html(parseInt($count.html()) - 1);
-                    }
-                }
-            );            
-        });
+        {{ macros.join_activity() }}
     })
 </script>
 {% endblock %}

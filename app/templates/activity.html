@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "_macros.html" as macros %}
+{% import "_macros.html" as macros with context %}
 
 {% block title %}{{ super() }}{{ activity.title }}-HUSTRunner{% endblock %}
 
@@ -116,6 +116,8 @@
                 })
             });
         });
+
+        {{ macros.join_activity() }}
 
     });
 </script>

@@ -108,3 +108,34 @@ var ue = UE.getEditor('editor', {
     </div>
 </div>
 {% endmacro %}
+
+{% macro join_activity() %}
+$('.join').on('click', function(){
+    var post_to = '{{ url_for('activity.join_activity') }}';
+    var action = $(this).html();
+    var $button = $(this);
+    var activity_id = $(this).data('activityid');
+    if(action == '参加'){
+        $(this).html('取消参加');
+        action = 'join'
+    }else{
+        $(this).html('参加');
+        action = 'quit'
+    };
+
+    $.post(post_to, {action: action, activity_id: activity_id }, 
+        function(){
+            if(action == 'join'){
+                html = '<div class="user-face" data-user="{{ current_user.id }}"><a href="#" data-toggle="tooltip" data-placement="top" title="{{ current_user.username }}"><img class="pil" src="{{ current_user.avatar }}"></a></div>'
+                $button.parent().prev('.user-wrap').append(html);
+                $count = $button.parent().prev().prev('.count').children('span');
+                $count.html(parseInt($count.html()) + 1);
+            }else{
+                $button.parent().prev('.user-wrap').children('.user-face[data-user={{ current_user.id }}]').remove();
+                $count = $button.parent().prev().prev('.count').children('span');
+                $count.html(parseInt($count.html()) - 1);
+            }
+        }
+    );            
+});
+{% endmacro %}

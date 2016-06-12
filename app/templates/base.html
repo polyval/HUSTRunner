@@ -93,7 +93,7 @@
                     {% for notify in current_user.unread_notifications|reverse if notify['action'] == 'follow' %}
                         <div class="noti-content">
                             {% for noti in notify['notify'] %}
-                            <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a>关注了你</span>
+                            <span><a href="{{ url_for('user.profile', username=noti.sender.username ) }}">{{ noti.sender.username }}</a> 关注了你</span>
                             {% endfor %}
                         </div>
                     {% endfor %}
