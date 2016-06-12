@@ -14,7 +14,7 @@ class Activity(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    brief = db.Column(db.String(300), nullable=False)
+    brief = db.Column(db.String(500), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.now())
     date_expired = db.Column(db.DateTime)
     # expired can be decided by date_expired, here we add it in database because
