@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, request, redirect, url_for, flash, jsonify
+from flask import render_template, request, redirect, url_for, flash, jsonify, abort
 
 from flask_login import current_user, login_required
 
 from .. import db
 from . import forum
-from .models import Post, Topic, Comment, CommentVote
+from .models import Post, Topic, Comment
 from ..message.models import Notification
 from .forms import PostForm
 
@@ -17,6 +17,8 @@ def new_post(slug=None):
     form = PostForm()
     if slug:
         post = Post.query.filter_by(slug=slug).first()
+        if post.author_id != current_user.id:
+            abort(404)
         if form.validate_on_submit():
             post.content_html = request.form['editorValue']
             post.topic = Topic.query.filter_by(title=form.topic.data).first()
