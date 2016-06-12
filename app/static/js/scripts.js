@@ -219,4 +219,6 @@ $(function(){
             })
         });
     });
+    // auto grow for textarea
+    $('textarea').autogrow();
 });

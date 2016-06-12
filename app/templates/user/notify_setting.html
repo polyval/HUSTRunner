@@ -27,7 +27,12 @@
     $('.radio input').on('change', function(){
         var radioname = $(this).attr('name');
         var value = $('input[name=' + radioname + ']:checked').val()
-        $.post('{{ url_for('user.notification') }}', {field: radioname, value: value});
+        $.post('{{ url_for('user.notification') }}',{ field: radioname, value: value }, function(){
+                    alert('保存成功');
+                })
+            .fail(function(){
+            alert('保存失败');
+        });
     });
 </script>
 {% endblock %}
