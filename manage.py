@@ -7,7 +7,7 @@ from app.message.models import Notification, NotifyConfig
 from app.activity.models import Activity
 from app.main.models import ImgFace, Tag
 
-app = create_app('testing')
+app = create_app('development')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
@@ -50,6 +50,13 @@ def test():
     # find all test files
     tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
+
+
+@manager.command
+def deploy():
+   Role.insert_roles()
+   Topic.insert_topic()
+
 
 if __name__ == '__main__':
     manager.run()
