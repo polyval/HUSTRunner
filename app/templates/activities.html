@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}{{ super() }}活动-HUSTRunner{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <!--left-->
+    <div class="col-md-8">
+        {% for activity in activities %}
+        <div class="brief">
+            <div class="header">
+                <a href="{{ url_for('activity.view_activity', id=activity.id) }}" class="brief-title">{{ activity.title }}</a>
+            </div>
+            <ul class="post-info">
+                <li>
+                    <i class="fa fa-user"></i>
+                    <a href="{{ url_for('user.profile', username=activity.initiator.username) }}">{{ activity.initiator.username }}</a>
+                </li>
+                <li><span>参加 {{ activity.participants.count() }} 人</span></li>
+                <li><i class="fa fa-calendar"></i><span class="expired-time" data-created="{{ activity.date_created }}" data-expired="{{ activity.date_expired }}"></span></li>
+            </ul>
+            <div class="post-body">
+                {{ activity.brief|truncate(100) }}
+            </div>
+        </div>
+        {% endfor %}
+        {% if pagination.has_prev or pagination.has_next %}
+        <div class="pagination">
+            {{ macros.pagination_widget(pagination, '.activities') }}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

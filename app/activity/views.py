@@ -7,6 +7,14 @@ from .models import Activity, ActivityQuestion
 from .forms import ActivityForm
 
 
+@activity.route('/activities')
+def view_all():
+    page = request.args.get('page', 1, type=int)
+    pagination = Activity.query.order_by(Activity.date_expired.desc()).paginate(page=page, per_page=20, error_out=False)
+    activities = pagination.items
+    return render_template('activities.html', activities=activities, pagination=pagination)
+
+
 @activity.route('/activity', methods=['POST'])
 @login_required
 def join_activity():
@@ -52,6 +60,7 @@ def view_activity(id):
 @login_required
 def new_activity(id=None):
     form = ActivityForm()
+    # edit activity
     if id:
         a = Activity.query.get(id)
         if a.initiator_id != current_user.id:
@@ -67,6 +76,7 @@ def new_activity(id=None):
         form.brief.default = a.brief
         form.process()
         return render_template('new_activity.html', form=form)
+    # new activity
     if form.validate_on_submit():
         new = Activity(title=form.title.data,
                        brief=form.brief.data,

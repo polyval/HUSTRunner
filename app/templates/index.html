@@ -20,8 +20,8 @@
         </div>
         {% for post in posts %}
         <div class="brief">
-            <div>
-            <h4><a href="{{ url_for('forum.view_post', slug=post.slug) }}">{{ post.title }}</a></h4>
+            <div class="header">
+            <a href="{{ url_for('forum.view_post', slug=post.slug) }}">{{ post.title }}</a>
             </div>
             <ul class="post-info" style="padding:0">
                 <li>
@@ -77,6 +77,9 @@
             </div>
         </div>
         {% endfor %}
+        <div>
+            <a href="{{ url_for('activity.view_all') }}" class="footer-all">更多 »</a>
+        </div>
     </div>
     {% endif %}
 </div>

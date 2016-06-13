@@ -76,7 +76,7 @@ a.notify-button {
 .popover-footer {
     vertical-align: middle;
 }
-.popover-footer-all {
+.footer-all {
     float: right;
     color: #999;
     font-size: 13px;
@@ -165,7 +165,7 @@ a.dropdown-toggle:hover{
 	padding-right: 10px;
 }
 /*index*/
-h4 a:visited{
+.header a:visited{
     color:#669;
 }
 .info{
