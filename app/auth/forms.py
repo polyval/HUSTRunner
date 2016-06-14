@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import re
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, regexp
 from ..user.models import User
 
-USERNAME_RE = r'^[\u4e00-\u9fa5_A-Za-z][\u4e00-\u9fa5_a-zA-Z0-9.]+$'
+r = u'^[\u4e00-\u9fa5_A-Za-z][\u4e00-\u9fa5_a-zA-Z0-9.]+$'
+USERNAME_RE = re.compile(r)
 is_username = regexp(USERNAME_RE,
                      message=u"用户名由中文，字母，数字，点或下划线组成，且首字母只能是中文或字母")
 
