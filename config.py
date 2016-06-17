@@ -27,6 +27,18 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = \
         'mysql+pymysql://root:password@localhost/hustrunner'
 
+    @classmethod
+    def init_app(cls, app):
+        Config.init__app(app)
+
+        import logging
+        from logging.handlers import RotatingFileHandler
+        file_handler = RotatingFileHandler('hustrunner.log', maxBytes=1024*1024*100, backupCount=20)
+        file_handler.setLevel(logging.ERROR)
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        file_handler.setFormatter(formatter)
+        app.logger.addHandler(file_handler)
+
 
 class TestingConfig(Config):
     TESTING = True
