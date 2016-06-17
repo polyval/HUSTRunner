@@ -138,7 +138,8 @@ class Comment(db.Model):
 
     parent_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
     children = db.relationship("Comment", backref=db.backref('parent',
-                                                             remote_side=[id]), lazy='dynamic')
+                                                             remote_side=[id]), lazy='dynamic',
+                               cascade='all, delete-orphan')
     votes = db.Column(db.Integer, default=0)
 
     @staticmethod

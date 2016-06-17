@@ -50,6 +50,9 @@ class TestingConfig(Config):
         SQLALCHEMY_DATABASE_URI = \
             'sqlite:////' + os.path.join(basedir, 'data-test.sqlite')
 
+    @classmethod
+    def init_app(cls, app):
+        Config.init__app(app)
 
 config = {
     'development': DevelopmentConfig,

@@ -79,8 +79,7 @@ def toggle_follow():
 def delete_comment(id):
     c = Comment.query.filter_by(id=id).first()
     if c.author == current_user or current_user.can(Permission.MODERATE_COMMENTS):
-        Comment.query.filter_by(parent_id=id).delete()
-        Comment.query.filter_by(id=id).delete()
+        db.session.delete(c)
     else:
         abort(404)
     return jsonify(delete=id)

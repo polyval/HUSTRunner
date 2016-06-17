@@ -4,7 +4,7 @@ from app.forum.models import Post, Comment
 from app import db, create_app
 
 
-class PostModelTestCase(unittest.TestCase):
+class CommentModelTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app('testing')
         self.app_context = self.app.app_context()
@@ -24,8 +24,10 @@ class PostModelTestCase(unittest.TestCase):
         db.session.add(p)
         db.session.commit()
         c = Comment(content_html='test', post=p, author=u)
-        db.session.add(c)
+        c1 = Comment(content_html='test', post=p, author=u, parent=c)
+        c2 = Comment(content_html='test', post=p, author=u, parent=c1)
+        db.session.add_all([c, c1, c2])
         db.session.commit()
-        db.session.delete(p)
-        self.assertTrue(Post.query.count() == 0)
+        self.assertTrue(Comment.query.count() == 3)
+        db.session.delete(c)
         self.assertTrue(Comment.query.count() == 0)
