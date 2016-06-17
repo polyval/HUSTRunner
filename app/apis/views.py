@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from . import api
 from app import db
 from ..forum.models import Comment, Post
-from ..user.models import User
+from ..user.models import User, Permission
 from ..message.models import Notification
 from ..main.models import ImgFace, Tag
 
@@ -78,9 +78,11 @@ def toggle_follow():
 @login_required
 def delete_comment(id):
     c = Comment.query.filter_by(id=id).first()
-    if c.author == current_user or current_user.role.name != 'User':
-        Comment.query.filter_by(id=id).delete()
+    if c.author == current_user or current_user.can(Permission.MODERATE_COMMENTS):
         Comment.query.filter_by(parent_id=id).delete()
+        Comment.query.filter_by(id=id).delete()
+    else:
+        abort(404)
     return jsonify(delete=id)
 
 

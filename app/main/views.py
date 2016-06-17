@@ -3,7 +3,9 @@ import os
 import re
 import json
 
+from app.user.models import Permission
 from flask import request, render_template, make_response, current_app, abort, jsonify
+from flask_login import current_user
 from .. import db
 from . import main
 from ..forum.models import Post, Topic
@@ -37,12 +39,15 @@ def index():
 @main.route('/topic/<int:topic_id>', methods=['GET', 'POST'])
 def topic(topic_id):
     if request.method == 'POST':
-        post_id = request.form.get('post_id', type=int)
-        if request.form.get('sticky') == 'False':
-            Post.query.filter_by(id=post_id).update({'sticky': True})
+        if current_user.can(Permission.STICK):
+            post_id = request.form.get('post_id', type=int)
+            if request.form.get('sticky') == 'False':
+                Post.query.filter_by(id=post_id).update({'sticky': True})
+            else:
+                Post.query.filter_by(id=post_id).update({'sticky': False})
+            return jsonify(msg='success')
         else:
-            Post.query.filter_by(id=post_id).update({'sticky': False})
-        return jsonify(msg='success')
+            abort(404)
     page = request.args.get('page', 1, type=int)
     topic_title = Topic.query.filter_by(id=topic_id).first_or_404().title
     type = request.args.get('type')
