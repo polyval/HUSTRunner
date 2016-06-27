@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
 import os
 import re
-import json
 import base64
 import random
 import urllib

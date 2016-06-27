@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+
 from slugify import slugify
+
+from .. import db
 from ..user.models import User
-from app import db
 
 
 class Post(db.Model):

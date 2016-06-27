@@ -8,7 +8,7 @@ from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
 from sqlalchemy import func
 
-from app import db
+from .. import db
 from ..activity.models import Activity
 from .. import login_manager
 

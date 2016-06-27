@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-from app import db
-from ..forum.models import Post, Comment, CommentVote
+from .. import db
+from ..forum.models import Post, Comment
 
 
 class Conversation(db.Model):

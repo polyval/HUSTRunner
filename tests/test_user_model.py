@@ -1,5 +1,6 @@
 import unittest
 from datetime import datetime
+
 from app.user.models import User, AnonymousUser, Follow
 from app import db, create_app
 from app.user.models import Role, Permission

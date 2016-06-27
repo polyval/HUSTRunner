@@ -1,4 +1,3 @@
-from ..forum.models import Post
 from .. import db
 
 tag_img = db.Table('tag_img',

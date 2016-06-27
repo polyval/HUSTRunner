@@ -1,9 +1,9 @@
 from flask import request, jsonify, render_template, redirect, url_for, abort
 from flask_login import login_required, current_user
-from . import activity
-from .. import db
-from .models import Activity, ActivityQuestion
 
+from .. import db
+from . import activity
+from .models import Activity, ActivityQuestion
 from .forms import ActivityForm
 
 

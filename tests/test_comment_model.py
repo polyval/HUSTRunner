@@ -1,4 +1,5 @@
 import unittest
+
 from app.user.models import User
 from app.forum.models import Post, Comment
 from app import db, create_app

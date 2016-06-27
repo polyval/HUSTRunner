@@ -8,13 +8,13 @@ import ast
 from flask import request, redirect, url_for, render_template, flash, current_app, jsonify
 from flask_login import current_user, login_required
 
+from ..decorators import admin_required
+from .. import db
 from . import user
 from .forms import EditProfileForm, EditProfileAdiminForm, NotifyForm
-from .models import User, Role, Follow
+from .models import User, Role
 from ..forum.models import Post, Comment
 from ..message.models import NotifyConfig
-from .. import db
-from ..decorators import admin_required
 
 
 @user.route('/user/<username>')

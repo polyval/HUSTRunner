@@ -1,7 +1,8 @@
 from flask import request, abort, jsonify
 from flask_login import current_user, login_required
+
+from .. import db
 from . import api
-from app import db
 from ..forum.models import Comment, Post
 from ..user.models import User, Permission
 from ..message.models import Notification

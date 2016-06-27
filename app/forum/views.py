@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, request, redirect, url_for, flash, jsonify, abort
-
 from flask_login import current_user, login_required
 
 from .. import db

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+
 from .. import db
 from sqlalchemy.ext.hybrid import hybrid_property
 

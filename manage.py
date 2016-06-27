@@ -1,5 +1,6 @@
-from flask_script import Manager, Server, Shell
+from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
+
 from app import create_app, db
 from app.user.models import User, Role, Follow
 from app.forum.models import Post, Topic, Comment
@@ -54,8 +55,8 @@ def test():
 
 @manager.command
 def deploy():
-   Role.insert_roles()
-   Topic.insert_topic()
+    Role.insert_roles()
+    Topic.insert_topic()
 
 
 if __name__ == '__main__':

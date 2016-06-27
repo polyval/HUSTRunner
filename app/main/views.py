@@ -3,11 +3,11 @@ import os
 import re
 import json
 
-from app.user.models import Permission
 from flask import request, render_template, make_response, current_app, abort, jsonify
 from flask_login import current_user
-from .. import db
+
 from . import main
+from ..user.models import Permission
 from ..forum.models import Post, Topic
 from ..activity.models import Activity
 from ..uploader import Uploader

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from itertools import groupby
 
-from flask import request, redirect, url_for, render_template
+from flask import request, render_template
 from flask_login import login_required, current_user
+
+from .. import db
+from . import message
 from .models import Conversation, Message, Notification
 from ..user.models import User
-from . import message
-from app import db
 
 
 @message.route('/inbox', methods=['GET', 'POST'])
