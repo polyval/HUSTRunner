@@ -22,10 +22,12 @@
                 <!--{% endif %}-->
             </div>
             <div class="avatar-editor clearfix">
+                {% if current_user.id == user.id %}
                 <form id="avatar_form" action="/avatar" enctype="multipart/form-data" style="display:none;" method="POST" target="avatar_iframe">
                     <input id="avatar_input" name="picture" type="file" class="file" accept="image/*">
                 </form>
-                <img src="{{ current_user.avatar }}" class="avatar" data-toggle="tooltip" data-placement="bottom" title="更换头像">
+                {% endif %}
+                <img src="{{ user.avatar }}" class="avatar" data-toggle="tooltip" data-placement="bottom" title="更换头像">
                 <iframe id='avatar_iframe' name="avatar_iframe" style="display: none;"></iframe>
                 <div class="user-describe">
                     <div class="short-info">
